@@ -1,0 +1,42 @@
+#summary Shows the currently supported syntax for Specify.That().
+
+= Comparison operations =
+== Equality and Inequality ==
+{{{
+Specify.That(Foo, Should.Equal(45));
+Specify.That(Foo, Should.Be.AtLeast(45));
+Specify.That(Foo, Should.Be.AtMost(45));
+Specify.That(Foo, Should.Be.Between(45, 48));
+Specify.That(Foo, Should.Be.GreaterThan(45));
+Specify.That(Foo, Should.Be.InRange(45, 48));
+Specify.That(Foo, Should.Be.LessThan(45));
+}}}
+== Type ==
+{{{
+Specify.That(Foo, Should.Be.OfType(TComponent));
+}}}
+
+= Additional options for comparisons =
+== Messages ==
+{{{Specify.That(Frequency, Should.Equal(440), 'Frequency');}}}
+
+Specify.That() takes an optional third parameter, which corresponds directly to the Message parameter in DUnit's !CheckEquals() methods. This is a must if you have more than one call to Specify.That() in a single test method.
+
+== Negation ==
+{{{
+Specify.That(Foo, Should.Not.Equal(45));
+}}}
+Everything that supports Should... also supports Should.Not...
+
+== Epsilons (ToWithin) ==
+{{{
+Specify.That(Foo, Should.Equal(45.0)); // default epsilon
+Specify.That(Foo, Should.Equal(45.0).ToWithin(0.00001));
+Specify.That(Foo, Should.Equal(45.0).Exactly); // no epsilon
+}}}
+Floating-point values are notoriously inexact. DUnitLite lets you specify an "epsilon", a number that specifies how close the values should be to be considered equal.
+
+If you don't specify an epsilon, DUnitLite will call Delphi's !SameValue function to provide a reasonable epsilon for you. You can also specify your own epsilon with .!ToWithin() or .Exactly.
+
+= Future plans =
+FutureSyntax lists some possible syntax that may be added in future versions.
