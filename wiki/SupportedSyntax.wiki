@@ -1,4 +1,4 @@
-#summary Shows the currently supported syntax for Specify.That().
+#summary Currently supported syntax for Specify.That()
 
 = Comparison operations =
 == Equality and Inequality ==
