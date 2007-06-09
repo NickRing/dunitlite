@@ -18,7 +18,9 @@ Specify.That(Foo, Should.Be.OfType(TComponent));
 
 = Additional options for comparisons =
 == Messages ==
-{{{Specify.That(Frequency, Should.Equal(440), 'Frequency');}}}
+{{{
+Specify.That(Frequency, Should.Equal(440), 'Frequency');
+}}}
 
 Specify.That() takes an optional third parameter, which corresponds directly to the Message parameter in DUnit's !CheckEquals() methods. This is a must if you have more than one call to Specify.That() in a single test method.
 
