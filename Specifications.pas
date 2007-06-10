@@ -63,6 +63,7 @@ type
     class function Be: IBeHelper;
     class function Equal(AValue: TValue): IConstraint; static;
     class function &Not: IShouldHelper; static;
+    class function Yield(AValue: TValue): IConstraint; static;
   end;
 
   TBeHelper = class(TInterfacedObject, IBeHelper)
@@ -130,6 +131,11 @@ end;
 class function Should.&Not: IShouldHelper;
 begin
   Result := TShouldNotHelper.Create;
+end;
+
+class function Should.Yield(AValue: TValue): IConstraint;
+begin
+  Result := Equal(AValue);
 end;
 
 class function Should.Be: IBeHelper;
