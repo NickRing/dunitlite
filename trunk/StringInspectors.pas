@@ -40,12 +40,12 @@ const
 type
   IStringInspector = interface
   ['{F91B9DBF-33FF-44EA-B800-6BCE3E4E127E}']
-    function Execute(AString: string): string;
+    function Inspect(AString: string): string;
   end;
 
   TStringInspector = class(TInterfacedObject, IStringInspector)
   public
-    function Execute(AString: string): string;
+    function Inspect(AString: string): string;
   end;
 
   IStringBuilder = interface
@@ -109,7 +109,7 @@ implementation
 
 { TStringInspector }
 
-function TStringInspector.Execute(AString: string): string;
+function TStringInspector.Inspect(AString: string): string;
 var
   Builder: IStringBuilder;
   State: IStringInspectorState;

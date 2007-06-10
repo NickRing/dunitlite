@@ -79,7 +79,7 @@ end;
 procedure TestStringInspector.SpecifyThatInspecting(AStringToInspect: string;
   AConstraint: IConstraint);
 begin
-  Specify.That(FInspector.Execute(AStringToInspect), AConstraint);
+  Specify.That(FInspector.Inspect(AStringToInspect), AConstraint);
 end;
 
 procedure TestStringInspector.TearDown;
