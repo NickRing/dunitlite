@@ -38,7 +38,7 @@ uses
   Specifications in 'Specifications.pas',
   SpecificationTests in 'SpecificationTests.pas',
   StringInspectors in 'StringInspectors.pas',
-  StringInspectorTests in 'StringInspectorTests.pas',
+  StringInspectorSpecs in 'StringInspectorSpecs.pas',
   TestValues in 'TestValues.pas',
   ValueComparers in 'ValueComparers.pas',
   ValueComparerTests in 'ValueComparerTests.pas',

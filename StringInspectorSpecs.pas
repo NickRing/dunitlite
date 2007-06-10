@@ -1,4 +1,4 @@
-unit StringInspectorTests;
+unit StringInspectorSpecs;
 
 // The contents of this file are subject to the Mozilla Public License
 // Version 1.1 (the "License"); you may not use this file except in
@@ -37,7 +37,7 @@ uses
   RegisterableTestCases;
 
 type
-  TestStringInspector = class(TRegisterableTestCase)
+  SpecStringInspector = class(TRegisterableTestCase)
   strict private
     FInspector: IStringInspector;
     function Apostrophes(Count: Integer): string;
@@ -46,16 +46,16 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
-    procedure TestEmptyString;
-    procedure TestSingleNormalCharacter;
-    procedure TestMultipleNormalCharacters;
-    procedure TestSingleLowAsciiCharacter;
-    procedure TestMultipleLowAsciiCharacters;
-    procedure TestSingleApostrophe;
-    procedure TestMultipleApostrophes;
-    procedure TestNormalCharactersThenLowAscii;
-    procedure TestLowAsciiThenNormalCharacters;
-    procedure TestLowAsciiThenApostrophe;
+    procedure SpecEmptyString;
+    procedure SpecSingleNormalCharacter;
+    procedure SpecMultipleNormalCharacters;
+    procedure SpecSingleLowAsciiCharacter;
+    procedure SpecMultipleLowAsciiCharacters;
+    procedure SpecSingleApostrophe;
+    procedure SpecMultipleApostrophes;
+    procedure SpecNormalCharactersThenLowAscii;
+    procedure SpecLowAsciiThenNormalCharacters;
+    procedure SpecLowAsciiThenApostrophe;
   end;
 
 implementation
@@ -65,79 +65,79 @@ uses
 
 { TestStringInspector }
 
-function TestStringInspector.Apostrophes(Count: Integer): string;
+function SpecStringInspector.Apostrophes(Count: Integer): string;
 begin
   Result := StringOfChar(Apostrophe, Count);
 end;
 
-procedure TestStringInspector.SetUp;
+procedure SpecStringInspector.SetUp;
 begin
   inherited;
   FInspector := TStringInspector.Create;
 end;
 
-procedure TestStringInspector.SpecifyThatInspecting(AStringToInspect: string;
+procedure SpecStringInspector.SpecifyThatInspecting(AStringToInspect: string;
   AConstraint: IConstraint);
 begin
   Specify.That(FInspector.Inspect(AStringToInspect), AConstraint);
 end;
 
-procedure TestStringInspector.TearDown;
+procedure SpecStringInspector.TearDown;
 begin
   FInspector := nil;
   inherited;
 end;
 
-procedure TestStringInspector.TestEmptyString;
+procedure SpecStringInspector.SpecEmptyString;
 begin
   SpecifyThatInspecting('', Should.Yield(Apostrophes(2)));
 end;
 
-procedure TestStringInspector.TestLowAsciiThenApostrophe;
+procedure SpecStringInspector.SpecLowAsciiThenApostrophe;
 begin
   SpecifyThatInspecting(#9 + Apostrophe, Should.Yield('#9' + Apostrophes(4)));
 end;
 
-procedure TestStringInspector.TestLowAsciiThenNormalCharacters;
+procedure SpecStringInspector.SpecLowAsciiThenNormalCharacters;
 begin
   SpecifyThatInspecting(#9'ab', Should.Yield('#9' + Apostrophe + 'ab' + Apostrophe));
 end;
 
-procedure TestStringInspector.TestMultipleApostrophes;
+procedure SpecStringInspector.SpecMultipleApostrophes;
 begin
   SpecifyThatInspecting(Apostrophes(2), Should.Yield(Apostrophes(6)));
 end;
 
-procedure TestStringInspector.TestMultipleLowAsciiCharacters;
+procedure SpecStringInspector.SpecMultipleLowAsciiCharacters;
 begin
   SpecifyThatInspecting(#13#10, Should.Yield('#13#10'));
 end;
 
-procedure TestStringInspector.TestMultipleNormalCharacters;
+procedure SpecStringInspector.SpecMultipleNormalCharacters;
 begin
   SpecifyThatInspecting('ab', Should.Yield(Apostrophe + 'ab' + Apostrophe));
 end;
 
-procedure TestStringInspector.TestNormalCharactersThenLowAscii;
+procedure SpecStringInspector.SpecNormalCharactersThenLowAscii;
 begin
   SpecifyThatInspecting('ab'#13#10, Should.Yield(Apostrophe + 'ab' + Apostrophe + '#13#10'));
 end;
 
-procedure TestStringInspector.TestSingleApostrophe;
+procedure SpecStringInspector.SpecSingleApostrophe;
 begin
   SpecifyThatInspecting(Apostrophe, Should.Yield(Apostrophes(4)));
 end;
 
-procedure TestStringInspector.TestSingleLowAsciiCharacter;
+procedure SpecStringInspector.SpecSingleLowAsciiCharacter;
 begin
   SpecifyThatInspecting(#0, Should.Yield('#0'));
 end;
 
-procedure TestStringInspector.TestSingleNormalCharacter;
+procedure SpecStringInspector.SpecSingleNormalCharacter;
 begin
   SpecifyThatInspecting('a', Should.Yield(Apostrophe + 'a' + Apostrophe));
 end;
 
 initialization
-  TestStringInspector.Register;
+  SpecStringInspector.Register;
 end.
