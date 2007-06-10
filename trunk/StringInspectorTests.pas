@@ -32,6 +32,7 @@ unit StringInspectorTests;
 interface
 
 uses
+  Constraints,
   StringInspectors,
   RegisterableTestCases;
 
@@ -40,6 +41,7 @@ type
   strict private
     FInspector: IStringInspector;
     function Apostrophes(Count: Integer): string;
+    procedure SpecifyThatInspecting(AStringToInspect: string; AConstraint: IConstraint);
   strict protected
     procedure SetUp; override;
     procedure TearDown; override;
@@ -58,6 +60,9 @@ type
 
 implementation
 
+uses
+  Specifications;
+
 { TestStringInspector }
 
 function TestStringInspector.Apostrophes(Count: Integer): string;
@@ -71,6 +76,12 @@ begin
   FInspector := TStringInspector.Create;
 end;
 
+procedure TestStringInspector.SpecifyThatInspecting(AStringToInspect: string;
+  AConstraint: IConstraint);
+begin
+  Specify.That(FInspector.Execute(AStringToInspect), AConstraint);
+end;
+
 procedure TestStringInspector.TearDown;
 begin
   FInspector := nil;
@@ -79,52 +90,52 @@ end;
 
 procedure TestStringInspector.TestEmptyString;
 begin
-  CheckEquals(Apostrophes(2), FInspector.Execute(''));
+  SpecifyThatInspecting('', Should.Yield(Apostrophes(2)));
 end;
 
 procedure TestStringInspector.TestLowAsciiThenApostrophe;
 begin
-  CheckEquals('#9' + Apostrophes(4), FInspector.Execute(#9 + Apostrophe));
+  SpecifyThatInspecting(#9 + Apostrophe, Should.Yield('#9' + Apostrophes(4)));
 end;
 
 procedure TestStringInspector.TestLowAsciiThenNormalCharacters;
 begin
-  CheckEquals('#9' + Apostrophe + 'ab' + Apostrophe, FInspector.Execute(#9'ab'));
+  SpecifyThatInspecting(#9'ab', Should.Yield('#9' + Apostrophe + 'ab' + Apostrophe));
 end;
 
 procedure TestStringInspector.TestMultipleApostrophes;
 begin
-  CheckEquals(Apostrophes(6), FInspector.Execute(Apostrophes(2)));
+  SpecifyThatInspecting(Apostrophes(2), Should.Yield(Apostrophes(6)));
 end;
 
 procedure TestStringInspector.TestMultipleLowAsciiCharacters;
 begin
-  CheckEquals('#13#10', FInspector.Execute(#13#10));
+  SpecifyThatInspecting(#13#10, Should.Yield('#13#10'));
 end;
 
 procedure TestStringInspector.TestMultipleNormalCharacters;
 begin
-  CheckEquals(Apostrophe + 'ab' + Apostrophe, FInspector.Execute('ab'));
+  SpecifyThatInspecting('ab', Should.Yield(Apostrophe + 'ab' + Apostrophe));
 end;
 
 procedure TestStringInspector.TestNormalCharactersThenLowAscii;
 begin
-  CheckEquals(Apostrophe + 'ab' + Apostrophe + '#13#10', FInspector.Execute('ab'#13#10));
+  SpecifyThatInspecting('ab'#13#10, Should.Yield(Apostrophe + 'ab' + Apostrophe + '#13#10'));
 end;
 
 procedure TestStringInspector.TestSingleApostrophe;
 begin
-  CheckEquals(Apostrophes(4), FInspector.Execute(Apostrophe));
+  SpecifyThatInspecting(Apostrophe, Should.Yield(Apostrophes(4)));
 end;
 
 procedure TestStringInspector.TestSingleLowAsciiCharacter;
 begin
-  CheckEquals('#0', FInspector.Execute(#0));
+  SpecifyThatInspecting(#0, Should.Yield('#0'));
 end;
 
 procedure TestStringInspector.TestSingleNormalCharacter;
 begin
-  CheckEquals(Apostrophe + 'a' + Apostrophe, FInspector.Execute('a'));
+  SpecifyThatInspecting('a', Should.Yield(Apostrophe + 'a' + Apostrophe));
 end;
 
 initialization
