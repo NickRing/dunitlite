@@ -1,9 +1,14 @@
 #summary Currently supported syntax for Specify.That()
 
 = Comparison operations =
-== Equality and Inequality ==
+== Equality ==
 {{{
 Specify.That(Foo, Should.Equal(45));
+Specify.That(Foo, Should.Yield(45));
+}}}
+{{{Should.Equal}}} and {{{Should.Yield}}} are equivalent; you can use whichever one is more readable in any given context. Here's an [http://www.excastle.com/blog/archive/2007/06/10/43650.aspx example of Should.Yield].
+== Inequality ==
+{{{
 Specify.That(Foo, Should.Be.AtLeast(45));
 Specify.That(Foo, Should.Be.AtMost(45));
 Specify.That(Foo, Should.Be.Between(45, 48));
