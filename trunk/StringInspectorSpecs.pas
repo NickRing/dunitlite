@@ -41,7 +41,8 @@ type
   strict private
     FInspector: IStringInspector;
     function Apostrophes(Count: Integer): string;
-    procedure SpecifyThatInspecting(AStringToInspect: string; AConstraint: IConstraint);
+    procedure SpecifyThatInspecting(AStringToInspect: string;
+      SatisfiesCondition: IConstraint);
   strict protected
     procedure SetUp; override;
     procedure TearDown; override;
@@ -77,9 +78,9 @@ begin
 end;
 
 procedure SpecStringInspector.SpecifyThatInspecting(AStringToInspect: string;
-  AConstraint: IConstraint);
+  SatisfiesCondition: IConstraint);
 begin
-  Specify.That(FInspector.Inspect(AStringToInspect), AConstraint);
+  Specify.That(FInspector.Inspect(AStringToInspect), SatisfiesCondition);
 end;
 
 procedure SpecStringInspector.TearDown;

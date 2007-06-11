@@ -38,7 +38,8 @@ uses
 type
   Specify = class
   public
-    class procedure That(AValue: TValue; AConstraint: IConstraint; AMessage: string = ''); static;
+    class procedure That(AValue: TValue; SatisfiesCondition: IConstraint;
+      AMessage: string = ''); static;
   end;
 
   IBeHelper = interface
@@ -99,21 +100,21 @@ uses
 
 { Specify }
 
-class procedure Specify.That(AValue: TValue; AConstraint: IConstraint;
+class procedure Specify.That(AValue: TValue; SatisfiesCondition: IConstraint;
   AMessage: string);
 var
   Strings: TExpectedAndActual;
   MessagePrefix: string;
   ComparerSuffix: string;
 begin
-  if AConstraint.Matches(AValue) then
+  if SatisfiesCondition.Matches(AValue) then
     Exit;
-  Strings := AConstraint.ExpectedAndActual(AValue);
+  Strings := SatisfiesCondition.ExpectedAndActual(AValue);
 
-  if AConstraint.ComparerText = '' then
+  if SatisfiesCondition.ComparerText = '' then
     ComparerSuffix := ''
   else
-    ComparerSuffix := ' (' + AConstraint.ComparerText + ')';
+    ComparerSuffix := ' (' + SatisfiesCondition.ComparerText + ')';
 
   if AMessage = '' then
     MessagePrefix := ''

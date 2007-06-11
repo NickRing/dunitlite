@@ -41,9 +41,9 @@ type
   TestSpecify = class(TRegisterableTestCase)
   strict private
     FBase: TBase;
-    procedure SpecifyShouldFail(AValue: TValue; AConstraint: IConstraint;
+    procedure SpecifyShouldFail(AValue: TValue; SatisfiesCondition: IConstraint;
       AExpectedExceptionMessage: string);
-    procedure SpecifyShouldFailGivenMessage(AValue: TValue; AConstraint: IConstraint;
+    procedure SpecifyShouldFailGivenMessage(AValue: TValue; SatisfiesCondition: IConstraint;
       AMessage: string; AExpectedExceptionMessage: string);
   strict protected
     procedure SetUp; override;
@@ -120,20 +120,20 @@ begin
 end;
 
 procedure TestSpecify.SpecifyShouldFail(AValue: TValue;
-  AConstraint: IConstraint; AExpectedExceptionMessage: string);
+  SatisfiesCondition: IConstraint; AExpectedExceptionMessage: string);
 begin
-  SpecifyShouldFailGivenMessage(AValue, AConstraint, '', AExpectedExceptionMessage);
+  SpecifyShouldFailGivenMessage(AValue, SatisfiesCondition, '', AExpectedExceptionMessage);
 end;
 
 procedure TestSpecify.SpecifyShouldFailGivenMessage(AValue: TValue;
-  AConstraint: IConstraint; AMessage, AExpectedExceptionMessage: string);
+  SatisfiesCondition: IConstraint; AMessage, AExpectedExceptionMessage: string);
 var
   ExceptionMessage: string;
 begin
   // can't use ExpectedException, because it doesn't work for ETestFailure
   ExceptionMessage := 'no exception';
   try
-    Specify.That(AValue, AConstraint, AMessage);
+    Specify.That(AValue, SatisfiesCondition, AMessage);
   except
     on E: ETestFailure do
       ExceptionMessage := E.Message;
