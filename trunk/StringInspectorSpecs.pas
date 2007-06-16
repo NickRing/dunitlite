@@ -38,12 +38,7 @@ uses
 
 type
   TStringInspectorSpecification = class(TRegisterableTestCase)
-  strict private
-    FInspector: IStringInspector;
   strict protected
-    procedure SetUp; override;
-    procedure TearDown; override;
-
     procedure SpecifyThatInspecting(AStringToInspect: string;
       SatisfiesCondition: IConstraint);
     procedure SpecifyThatInspectingSubstring(AStringToInspect: string;
@@ -83,12 +78,6 @@ uses
 
 { TStringInspectorSpecification }
 
-procedure TStringInspectorSpecification.SetUp;
-begin
-  inherited;
-  FInspector := TStringInspector.Create;
-end;
-
 procedure TStringInspectorSpecification.SpecifyThatInspecting(
   AStringToInspect: string; SatisfiesCondition: IConstraint);
 begin
@@ -100,14 +89,8 @@ procedure TStringInspectorSpecification.SpecifyThatInspectingSubstring(
   AStringToInspect: string; AStartIndex, ALength: Integer;
   SatisfiesCondition: IConstraint);
 begin
-  Specify.That(FInspector.Inspect(AStringToInspect, AStartIndex, ALength),
+  Specify.That(TStringInspector.Inspect(AStringToInspect, AStartIndex, ALength),
     SatisfiesCondition);
-end;
-
-procedure TStringInspectorSpecification.TearDown;
-begin
-  FInspector := nil;
-  inherited;
 end;
 
 { TestStringInspector }
