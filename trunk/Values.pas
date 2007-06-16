@@ -62,6 +62,7 @@ type
     class operator Implicit(Value: TFooEnum): TValue;
     class operator Implicit(Value: TObject): TValue;
     class operator Implicit(Value: TPoint): TValue;
+    class operator Implicit(Value: TValueComparison): TValue;
     function Inspect: string;
     function IsOfType(AClass: TClass): Boolean;
     function SameInstance(B: TValue): Boolean;
@@ -317,6 +318,11 @@ end;
 class operator TValue.Implicit(Value: TPoint): TValue;
 begin
   Result := TValue.Create(TPointValue.Create(Value));
+end;
+
+class operator TValue.Implicit(Value: TValueComparison): TValue;
+begin
+  Result := TValue.Create(TEnumValue.Create(Ord(Value), TypeInfo(TValueComparison)));
 end;
 
 function TValue.Inspect: string;
