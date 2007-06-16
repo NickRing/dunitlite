@@ -42,6 +42,8 @@ type
     function GetComparer: IValueComparer; virtual; abstract;
     procedure SpecifyThatComparing(const A, B: Extended;
       SatisfiesCondition: IConstraint);
+    procedure SpecifyThatIndexOfFirstDifferenceBetween(const A, B: string;
+      SatisfiesCondition: IConstraint);
 
     property Comparer: IValueComparer read GetComparer;
   published
@@ -57,6 +59,10 @@ type
     procedure SpecCloseEnough;
     procedure SpecNotCloseEnough;
     procedure SpecAsString;
+    procedure SpecIndexOfFirstDifference;
+    procedure SpecIndexOfFirstDifferenceWhenFirstIsLeadingSubstring;
+    procedure SpecIndexOfFirstDifferenceWhenSecondIsLeadingSubstring;
+    procedure SpecIndexOfFirstDifferenceWhenStringsAreEqual;
   end;
 
   ExactComparerSpec = class(TValueComparerSpecification)
@@ -91,6 +97,12 @@ begin
   Specify.That(Comparer.CompareExtendeds(A, B), SatisfiesCondition);
 end;
 
+procedure TValueComparerSpecification.SpecifyThatIndexOfFirstDifferenceBetween(
+  const A, B: string; SatisfiesCondition: IConstraint);
+begin
+  Specify.That(Comparer.IndexOfFirstDifference(A, B), SatisfiesCondition);
+end;
+
 procedure TValueComparerSpecification.SpecExactlyEqual;
 begin
   SpecifyThatComparing(1, 1, Should.Yield(vcEqual));
@@ -122,6 +134,26 @@ procedure DefaultValueComparerSpec.SpecCloseEnough;
 begin
   SpecifyThatComparing(EpsilonTestValues.BaseValue, EpsilonTestValues.SameAtDefaultEpsilon,
     Should.Yield(vcEqual));
+end;
+
+procedure DefaultValueComparerSpec.SpecIndexOfFirstDifference;
+begin
+  SpecifyThatIndexOfFirstDifferenceBetween('abc', 'axc', Should.Equal(2));
+end;
+
+procedure DefaultValueComparerSpec.SpecIndexOfFirstDifferenceWhenFirstIsLeadingSubstring;
+begin
+  SpecifyThatIndexOfFirstDifferenceBetween('abc', 'abcde', Should.Equal(4));
+end;
+
+procedure DefaultValueComparerSpec.SpecIndexOfFirstDifferenceWhenSecondIsLeadingSubstring;
+begin
+  SpecifyThatIndexOfFirstDifferenceBetween('abcde', 'abc', Should.Equal(4));
+end;
+
+procedure DefaultValueComparerSpec.SpecIndexOfFirstDifferenceWhenStringsAreEqual;
+begin
+  SpecifyThatIndexOfFirstDifferenceBetween('abc', 'abc', Should.Equal(0));
 end;
 
 procedure DefaultValueComparerSpec.SpecNotCloseEnough;
