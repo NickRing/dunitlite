@@ -39,20 +39,26 @@ type
   ['{7E727781-3AC3-4C5B-AA8B-17AE47554D32}']
     function AsString: string;
     function CompareExtendeds(const A, B: Extended): TValueComparison;
+    function IndexOfFirstDifference(const A, B: string): Integer;
   end;
 
-  TDefaultValueComparer = class(TInterfacedObject, IValueComparer)
+  TValueComparerBase = class(TInterfacedObject)
+  public
+    function CompareExtendeds(const A, B: Extended): TValueComparison;
+    function IndexOfFirstDifference(const A, B: string): Integer;
+  end;
+
+  TDefaultValueComparer = class(TValueComparerBase, IValueComparer)
   private class var
     // should be strict private, but Delphi doesn't have class constructors
     FInstance: IValueComparer;
   public
     function AsString: string;
-    function CompareExtendeds(const A, B: Extended): TValueComparison;
 
     class property Instance: IValueComparer read FInstance;
   end;
 
-  TEpsilonValueComparer = class(TInterfacedObject, IValueComparer)
+  TEpsilonValueComparer = class(TValueComparerBase, IValueComparer)
   strict private
     FEpsilon: Extended;
   public
@@ -61,7 +67,7 @@ type
     function CompareExtendeds(const A, B: Extended): TValueComparison;
   end;
 
-  TExactValueComparer = class(TInterfacedObject, IValueComparer)
+  TExactValueComparer = class(TValueComparerBase, IValueComparer)
   public
     function AsString: string;
     function CompareExtendeds(const A, B: Extended): TValueComparison;
@@ -73,14 +79,9 @@ uses
   Math,
   SysUtils;
 
-{ TDefaultValueComparer }
+{ TValueComparerBase }
 
-function TDefaultValueComparer.AsString: string;
-begin
-  Result := '';
-end;
-
-function TDefaultValueComparer.CompareExtendeds(const A, B: Extended): TValueComparison;
+function TValueComparerBase.CompareExtendeds(const A, B: Extended): TValueComparison;
 var
   First: Double;
   Second: Double;
@@ -93,6 +94,28 @@ begin
     Result := vcLess
   else
     Result := vcGreater;
+end;
+
+function TValueComparerBase.IndexOfFirstDifference(const A, B: string): Integer;
+begin
+  for Result := 1 to Min(Length(A), Length(B)) do
+  begin
+    if A[Result] <> B[Result] then
+      Exit;
+  end;
+  if Length(A) < Length(B) then
+    Result := Length(A) + 1
+  else if Length(B) < Length(A) then
+    Result := Length(B) + 1
+  else
+    Result := 0;
+end;
+
+{ TDefaultValueComparer }
+
+function TDefaultValueComparer.AsString: string;
+begin
+  Result := '';
 end;
 
 { TEpsilonValueComparer }
