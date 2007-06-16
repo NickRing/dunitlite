@@ -777,7 +777,7 @@ var
   Inspector: IStringInspector;
 begin
   Inspector := TStringInspector.Create;
-  Result := Inspector.Inspect(FValue);
+  Result := Inspector.Inspect(FValue, 1, Length(FValue));
 end;
 
 end.
