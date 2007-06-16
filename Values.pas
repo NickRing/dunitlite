@@ -779,11 +779,8 @@ begin
 end;
 
 function TStringValue.Inspect: string;
-var
-  Inspector: IStringInspector;
 begin
-  Inspector := TStringInspector.Create;
-  Result := Inspector.Inspect(FValue, 1, Length(FValue));
+  Result := TStringInspector.Inspect(FValue, 1, Length(FValue));
 end;
 
 end.

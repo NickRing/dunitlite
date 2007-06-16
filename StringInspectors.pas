@@ -38,14 +38,9 @@ const
   Apostrophe = '''';
 
 type
-  IStringInspector = interface
-  ['{F91B9DBF-33FF-44EA-B800-6BCE3E4E127E}']
-    function Inspect(AString: string; AStartIndex, ALength: Integer): string;
-  end;
-
-  TStringInspector = class(TInterfacedObject, IStringInspector)
+  TStringInspector = class
   public
-    function Inspect(AString: string; AStartIndex, ALength: Integer): string;
+    class function Inspect(AString: string; AStartIndex, ALength: Integer): string; static;
   end;
 
   IStringBuilder = interface
@@ -109,7 +104,7 @@ implementation
 
 { TStringInspector }
 
-function TStringInspector.Inspect(AString: string; AStartIndex, ALength: Integer): string;
+class function TStringInspector.Inspect(AString: string; AStartIndex, ALength: Integer): string;
 var
   Builder: IStringBuilder;
   State: IStringInspectorState;
