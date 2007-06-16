@@ -41,7 +41,7 @@ uses
   StringInspectorSpecs in 'StringInspectorSpecs.pas',
   TestValues in 'TestValues.pas',
   ValueComparers in 'ValueComparers.pas',
-  ValueComparerTests in 'ValueComparerTests.pas',
+  ValueComparerSpecs in 'ValueComparerSpecs.pas',
   Values in 'Values.pas',
   ValueTests in 'ValueTests.pas';
 
