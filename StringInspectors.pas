@@ -40,12 +40,12 @@ const
 type
   IStringInspector = interface
   ['{F91B9DBF-33FF-44EA-B800-6BCE3E4E127E}']
-    function Inspect(AString: string): string;
+    function Inspect(AString: string; AStartIndex, ALength: Integer): string;
   end;
 
   TStringInspector = class(TInterfacedObject, IStringInspector)
   public
-    function Inspect(AString: string): string;
+    function Inspect(AString: string; AStartIndex, ALength: Integer): string;
   end;
 
   IStringBuilder = interface
@@ -109,17 +109,21 @@ implementation
 
 { TStringInspector }
 
-function TStringInspector.Inspect(AString: string): string;
+function TStringInspector.Inspect(AString: string; AStartIndex, ALength: Integer): string;
 var
   Builder: IStringBuilder;
   State: IStringInspectorState;
   Ch: Char;
 begin
   Builder := TStringBuilder.Create;
+  if AStartIndex > 1 then
+    Builder.Append('...');
   State := TStringInspectorInitialState.Create(Builder);
-  for Ch in AString do
+  for Ch in Copy(AString, AStartIndex, ALength) do
     State := State.Handle(Ch);
   State.HandleEndOfString;
+  if (AStartIndex + ALength - 1) < Length(AString) then
+    Builder.Append('...');
   Result := Builder.AsString;
 end;
 
