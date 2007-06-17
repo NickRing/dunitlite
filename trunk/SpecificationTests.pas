@@ -65,6 +65,7 @@ type
     procedure TestFailingShouldNotEqualToWithin;
     procedure TestPassingShouldNotEqualExactly;
     procedure TestFailingShouldNotEqualExactly;
+    procedure TestFailingLongStringsShouldEqual;
     // Class: Should.Be.OfType
     procedure TestPassingShouldBeOfType;
     procedure TestFailingShouldBeOfType;
@@ -145,6 +146,14 @@ procedure TestSpecify.TearDown;
 begin
   FreeAndNil(FBase);
   inherited;
+end;
+
+procedure TestSpecify.TestFailingLongStringsShouldEqual;
+begin
+  SpecifyShouldFail(StringOfChar('<', 100) + '1' + StringOfChar('>', 100),
+    Should.Equal(StringOfChar('<', 100) + '2' + StringOfChar('>', 100)),
+    'Expected: ...''<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>''...'#13#10 +
+    ' but was: ...''<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<1>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>''...');
 end;
 
 procedure TestSpecify.TestFailingShouldBeAtLeast;

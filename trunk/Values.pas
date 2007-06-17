@@ -63,7 +63,8 @@ type
     class operator Implicit(Value: TObject): TValue;
     class operator Implicit(Value: TPoint): TValue;
     class operator Implicit(Value: TValueComparison): TValue;
-    function Inspect: string;
+    function IndexOfFirstDifference(OtherValue: TValue; AComparer: IValueComparer): Integer;
+    function Inspect(FirstDifferenceIndex: Integer): string;
     function IsOfType(AClass: TClass): Boolean;
     function SameInstance(B: TValue): Boolean;
     function SameText(B: TValue): Boolean;
@@ -86,7 +87,8 @@ type
     function get_ObjectValue: TObject;
     function get_PointValue: TPoint;
     function get_StringValue: string;
-    function Inspect: string;
+    function IndexOfFirstDifference(OtherValue: IValue; AComparer: IValueComparer): Integer;
+    function Inspect(FirstDifferenceIndex: Integer): string;
     function IsOfType(AClass: TClass): Boolean;
     function SameInstance(Other: IValue): Boolean;
     function SameText(Other: IValue): Boolean;
@@ -126,7 +128,9 @@ type
     function get_ObjectValue: TObject; virtual;
     function get_PointValue: TPoint; virtual;
     function get_StringValue: string; virtual;
-    function Inspect: string; virtual;
+    function IndexOfFirstDifference(OtherValue: IValue;
+      AComparer: IValueComparer): Integer; virtual;
+    function Inspect(FirstDifferenceIndex: Integer): string; virtual;
     function IsOfType(AClass: TClass): Boolean; virtual;
     function SameInstance(Other: IValue): Boolean; virtual;
     function SameText(Other: IValue): Boolean;
@@ -236,7 +240,9 @@ type
     constructor Create(AValue: string);
     function AsString: string; override;
     function get_StringValue: string; override;
-    function Inspect: string; override;
+    function IndexOfFirstDifference(OtherValue: IValue;
+      AComparer: IValueComparer): Integer; override;
+    function Inspect(FirstDifferenceIndex: Integer): string; override;
   end;
 
 implementation
@@ -325,9 +331,15 @@ begin
   Result := TValue.Create(TEnumValue.Create(Ord(Value), TypeInfo(TValueComparison)));
 end;
 
-function TValue.Inspect: string;
+function TValue.IndexOfFirstDifference(OtherValue: TValue;
+  AComparer: IValueComparer): Integer;
 begin
-  Result := FValue.Inspect;
+  Result := FValue.IndexOfFirstDifference(OtherValue.Value, AComparer);
+end;
+
+function TValue.Inspect(FirstDifferenceIndex: Integer): string;
+begin
+  Result := FValue.Inspect(FirstDifferenceIndex);
 end;
 
 function TValue.IsOfType(AClass: TClass): Boolean;
@@ -444,7 +456,13 @@ begin
   raise InvalidCast('string');
 end;
 
-function TBaseValue.Inspect: string;
+function TBaseValue.IndexOfFirstDifference(OtherValue: IValue;
+  AComparer: IValueComparer): Integer;
+begin
+  Result := 0;
+end;
+
+function TBaseValue.Inspect(FirstDifferenceIndex: Integer): string;
 begin
   Result := AsString;
 end;
@@ -778,9 +796,19 @@ begin
   Result := FValue;
 end;
 
-function TStringValue.Inspect: string;
+function TStringValue.IndexOfFirstDifference(OtherValue: IValue;
+  AComparer: IValueComparer): Integer;
 begin
-  Result := TStringInspector.Inspect(FValue, 1, Length(FValue));
+  Result := AComparer.IndexOfFirstDifference(FValue, OtherValue.StringValue);
+end;
+
+function TStringValue.Inspect(FirstDifferenceIndex: Integer): string;
+const
+  WindowBefore = 30;
+  WindowAfter = 30;
+begin
+  Result := TStringInspector.Inspect(FValue,
+    FirstDifferenceIndex - WindowBefore, WindowBefore + 1 + WindowAfter);
 end;
 
 end.

@@ -216,9 +216,12 @@ end;
 
 function TComparisonConstraint.ExpectedAndActual(
   AActualValue: TValue): TExpectedAndActual;
+var
+  FirstDifferenceIndex: Integer;
 begin
-  Result.Expected := FMessagePrefix + FExpectedValue.Inspect;
-  Result.Actual := AActualValue.Inspect;
+  FirstDifferenceIndex := FExpectedValue.IndexOfFirstDifference(AActualValue, Comparer);
+  Result.Expected := FMessagePrefix + FExpectedValue.Inspect(FirstDifferenceIndex);
+  Result.Actual := AActualValue.Inspect(FirstDifferenceIndex);
 end;
 
 function TComparisonConstraint.Matches(AActualValue: TValue): Boolean;
@@ -296,10 +299,16 @@ end;
 
 function TRangeConstraint.ExpectedAndActual(
   AActualValue: TValue): TExpectedAndActual;
+var
+  FirstDifferenceIndex: Integer;
 begin
-  Result.Expected := 'in range ' + FLowerBracket + FLowerBound.Inspect + ', ' +
-    FUpperBound.Inspect + FUpperBracket;
-  Result.Actual := AActualValue.Inspect;
+  FirstDifferenceIndex := FLowerBound.IndexOfFirstDifference(AActualValue, Comparer);
+  if FirstDifferenceIndex = 0 then
+    FirstDifferenceIndex := FUpperBound.IndexOfFirstDifference(AActualValue, Comparer);
+  Result.Expected := 'in range ' + FLowerBracket +
+    FLowerBound.Inspect(FirstDifferenceIndex) + ', ' +
+    FUpperBound.Inspect(FirstDifferenceIndex) + FUpperBracket;
+  Result.Actual := AActualValue.Inspect(FirstDifferenceIndex);
 end;
 
 function TRangeConstraint.Matches(AActualValue: TValue): Boolean;
