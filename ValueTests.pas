@@ -40,7 +40,11 @@ uses
 
 type
   TValueTestCase = class(TRegisterableTestCase)
+  strict private
+    FFirstDifferenceIndex: Integer;
   strict protected
+    procedure SetUp; override;
+
     procedure CheckComparesAs(Comparisons: TValueComparisonSet;
       const Left, Right: TValue; Comparer: IValueComparer = nil);
     procedure CheckDoesNotCompareAs(Comparisons: TValueComparisonSet;
@@ -62,6 +66,8 @@ type
     procedure CheckValueAsString(ExpectedString: string; const Value: TValue);
     procedure CheckValuesEqual(const A, B: TValue; Comparer: IValueComparer = nil);
     procedure CheckValuesNotEqual(const A, B: TValue; Comparer: IValueComparer = nil);
+
+    property FirstDifferenceIndex: Integer read FFirstDifferenceIndex write FFirstDifferenceIndex;
   end;
 
   TestBooleanValue = class(TValueTestCase)
@@ -150,6 +156,7 @@ type
     procedure TestInspect;
     procedure TestLessThan;
     procedure TestGreaterThan;
+    procedure TestIndexOfFirstDifference;
   end;
 
   TestInterfaceValue = class(TValueTestCase)
@@ -216,8 +223,10 @@ type
     procedure TestNotSameText;
     procedure TestAsString;
     procedure TestInspect;
+    procedure TestInspectMiddleOfLongString;
     procedure TestLessThan;
     procedure TestGreaterThan;
+    procedure TestIndexOfFirstDifference;
   end;
 
 implementation
@@ -266,7 +275,7 @@ end;
 procedure TValueTestCase.CheckInspectValue(const Expected: string;
   const Value: TValue);
 begin
-  CheckEquals(Expected, Value.Inspect);
+  CheckEquals(Expected, Value.Inspect(FFirstDifferenceIndex));
 end;
 
 procedure TValueTestCase.CheckLessThan(const Left, Right: TValue;
@@ -344,6 +353,12 @@ procedure TValueTestCase.CheckValuesNotEqual(const A, B: TValue;
   Comparer: IValueComparer);
 begin
   CheckDoesNotCompareAs([vcEqual], A, B, Comparer);
+end;
+
+procedure TValueTestCase.SetUp;
+begin
+  inherited;
+  FFirstDifferenceIndex := 0;
 end;
 
 { TestBooleanValue }
@@ -673,6 +688,15 @@ begin
   CheckGreaterThan(5, 4);
 end;
 
+procedure TestIntegerValue.TestIndexOfFirstDifference;
+var
+  Value: TValue;
+begin
+  Value := 99;
+  CheckEquals(0, Value.IndexOfFirstDifference(42, TDefaultValueComparer.Instance),
+    'IndexOfFirstDifference should return 0 for anything but strings');
+end;
+
 procedure TestIntegerValue.TestInequality;
 begin
   CheckValuesNotEqual(42, 0);
@@ -725,7 +749,7 @@ end;
 
 procedure TestInterfaceValue.TestInspect;
 begin
-  CheckReferenceString('interface', FFirstValue.Inspect);
+  CheckReferenceString('interface', FFirstValue.Inspect(0));
 end;
 
 procedure TestInterfaceValue.TestNilAsString;
@@ -774,7 +798,7 @@ end;
 
 procedure TestObjectValue.TestInspect;
 begin
-  CheckReferenceString('TObject', FFirstValue.Inspect);
+  CheckReferenceString('TObject', FFirstValue.Inspect(0));
 end;
 
 procedure TestObjectValue.TestIsNotOfBaseType;
@@ -881,6 +905,14 @@ begin
   CheckGreaterThan('z', 'a');
 end;
 
+procedure TestStringValue.TestIndexOfFirstDifference;
+var
+  Value: TValue;
+begin
+  Value := 'abcde';
+  CheckEquals(3, Value.IndexOfFirstDifference('abxde', TDefaultValueComparer.Instance));
+end;
+
 procedure TestStringValue.TestInequality;
 begin
   CheckValuesNotEqual('Abc', '');
@@ -890,6 +922,14 @@ end;
 procedure TestStringValue.TestInspect;
 begin
   CheckInspectValue('''ab''#13#10', 'ab'#13#10);
+end;
+
+procedure TestStringValue.TestInspectMiddleOfLongString;
+begin
+  FirstDifferenceIndex := 101;
+  CheckInspectValue(
+    '...''' + StringOfChar('<', 30) + '|' + StringOfChar('>', 30) + '''...',
+    StringOfChar('<', 100) + '|' + StringOfChar('>', 100)); 
 end;
 
 procedure TestStringValue.TestLessThan;
