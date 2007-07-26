@@ -33,11 +33,11 @@ interface
 
 uses
   Constraints,
-  StringInspectors,
-  RegisterableTestCases;
+  Specifications,
+  StringInspectors;
 
 type
-  TStringInspectorSpecification = class(TRegisterableTestCase)
+  TStringInspectorSpecification = class(TRegisterableSpecification)
   strict protected
     procedure SpecifyThatInspecting(AStringToInspect: string;
       SatisfiesCondition: IConstraint);
@@ -72,9 +72,6 @@ type
   end;
 
 implementation
-
-uses
-  Specifiers;
 
 { TStringInspectorSpecification }
 

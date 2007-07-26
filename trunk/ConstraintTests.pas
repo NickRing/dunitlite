@@ -33,12 +33,12 @@ interface
 
 uses
   Constraints,
-  RegisterableTestCases,
+  Specifications,
   TestValues,
   Values;
 
 type
-  TConstraintTestCase = class(TRegisterableTestCase)
+  TConstraintTestCase = class(TRegisterableSpecification)
   strict protected
     function Between(const ALowerBound, AUpperBound: TValue): IConstraint;
     procedure CheckDoesNotMatch(const AActualValue: TValue; const Constraint: IConstraint);

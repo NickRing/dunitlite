@@ -34,7 +34,7 @@ uses
   TestFramework,
   Constraints in 'Constraints.pas',
   ConstraintTests in 'ConstraintTests.pas',
-  RegisterableTestCases in 'RegisterableTestCases.pas',
+  Specifications in 'Specifications.pas',
   Specifiers in 'Specifiers.pas',
   SpecifierTests in 'SpecifierTests.pas',
   StringInspectors in 'StringInspectors.pas',

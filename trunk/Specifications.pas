@@ -1,4 +1,4 @@
-unit RegisterableTestCases;
+unit Specifications;
 
 // The contents of this file are subject to the Mozilla Public License
 // Version 1.1 (the "License"); you may not use this file except in
@@ -32,19 +32,26 @@ unit RegisterableTestCases;
 interface
 
 uses
+  Specifiers,
   TestFramework;
 
 type
-  TRegisterableTestCase = class(TTestCase)
+  TSpecification = class(TTestCase)
+  strict protected type
+    Specify = Specifiers.Specify;
+    Should = Specifiers.Should;
+  end;
+
+  TRegisterableSpecification = class(TSpecification)
   public
     class procedure Register;
   end;
 
 implementation
 
-{ TRegisterableTestCase }
+{ TRegisterableSpecification }
 
-class procedure TRegisterableTestCase.Register;
+class procedure TRegisterableSpecification.Register;
 begin
   TestFramework.RegisterTest(Self.Suite);
 end;
