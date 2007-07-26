@@ -32,11 +32,11 @@ unit Specifications;
 interface
 
 uses
-  Specifiers,
-  TestFramework;
+  InsulatedTests,
+  Specifiers;
 
 type
-  TSpecification = class(TTestCase)
+  TSpecification = class(TInsulatedTest)
   strict protected type
     Specify = Specifiers.Specify;
     Should = Specifiers.Should;
@@ -48,6 +48,9 @@ type
   end;
 
 implementation
+
+uses
+  TestFramework;
 
 { TRegisterableSpecification }
 
