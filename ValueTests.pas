@@ -32,14 +32,14 @@ unit ValueTests;
 interface
 
 uses
-  RegisterableTestCases,
+  Specifications,
   TestValues,
   Types,
   ValueComparers,
   Values;
 
 type
-  TValueTestCase = class(TRegisterableTestCase)
+  TValueTestCase = class(TRegisterableSpecification)
   strict private
     FFirstDifferenceIndex: Integer;
   strict protected

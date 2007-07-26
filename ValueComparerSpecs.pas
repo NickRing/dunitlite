@@ -33,11 +33,11 @@ interface
 
 uses
   Constraints,
-  RegisterableTestCases,
+  Specifications,
   ValueComparers;
 
 type
-  TValueComparerSpecification = class(TRegisterableTestCase)
+  TValueComparerSpecification = class(TRegisterableSpecification)
   strict protected
     function GetComparer: IValueComparer; virtual; abstract;
     procedure SpecifyThatComparing(const A, B: Extended;
@@ -85,7 +85,6 @@ type
 implementation
 
 uses
-  Specifiers,
   TestValues,
   TypInfo;
 

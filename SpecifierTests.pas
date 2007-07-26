@@ -33,12 +33,12 @@ interface
 
 uses
   Constraints,
-  RegisterableTestCases,
+  Specifications,
   TestValues,
   Values;
 
 type
-  TestSpecify = class(TRegisterableTestCase)
+  TestSpecify = class(TRegisterableSpecification)
   strict private
     FBase: TBase;
     procedure SpecifyShouldFail(AValue: TValue; SatisfiesCondition: IConstraint;
@@ -108,7 +108,6 @@ type
 implementation
 
 uses
-  Specifiers,
   SysUtils,
   TestFramework;
 

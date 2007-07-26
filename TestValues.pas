@@ -32,7 +32,7 @@ unit TestValues;
 interface
 
 uses
-  RegisterableTestCases;
+  Specifications;
 
 type
   IFoo = interface
@@ -57,7 +57,7 @@ type
     BarelyDifferent           = 42.00000000000000001;
   end;
 
-  TestEpsilonTestValues = class(TRegisterableTestCase)
+  TestEpsilonTestValues = class(TRegisterableSpecification)
   strict private
     FComparisonValue: Extended;
     procedure CheckBaseIsEqualAsDouble;
