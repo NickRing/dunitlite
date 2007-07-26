@@ -74,7 +74,7 @@ type
 implementation
 
 uses
-  Specifications;
+  Specifiers;
 
 { TStringInspectorSpecification }
 

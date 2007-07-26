@@ -85,7 +85,7 @@ type
 implementation
 
 uses
-  Specifications,
+  Specifiers,
   TestValues,
   TypInfo;
 
