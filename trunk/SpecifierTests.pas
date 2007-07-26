@@ -1,4 +1,4 @@
-unit SpecificationTests;
+unit SpecifierTests;
 
 // The contents of this file are subject to the Mozilla Public License
 // Version 1.1 (the "License"); you may not use this file except in
@@ -108,7 +108,7 @@ type
 implementation
 
 uses
-  Specifications,
+  Specifiers,
   SysUtils,
   TestFramework;
 
