@@ -84,7 +84,7 @@ var
   Idx: Integer;
   MethodName: string;
 begin
-  Result := TTestSuite.Create(ClassName);
+  Result := TTestSuite.Create(ATestClass.ClassName);
   MethodEnumerator := TMethodEnumerator.Create(ATestClass);
   try
     for Idx := 0 to MethodEnumerator.Methodcount - 1 do
