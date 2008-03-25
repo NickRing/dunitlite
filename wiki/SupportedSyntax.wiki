@@ -7,6 +7,11 @@ Specify.That(Foo, Should.Equal(45));
 Specify.That(Foo, Should.Yield(45));
 }}}
 {{{Should.Equal}}} and {{{Should.Yield}}} are equivalent; you can use whichever one is more readable in any given context. Here's an [http://www.excastle.com/blog/archive/2007/06/10/43650.aspx example of Should.Yield].
+== Reference equality ==
+{{{
+Specify.That(Foo, Should.ReferTo(Bar));
+}}}
+As of version 0.4, {{{Should.ReferTo}}} is only supported for objects. I haven't gotten around to making it work for interfaces yet.
 == Inequality ==
 {{{
 Specify.That(Foo, Should.Be.AtLeast(45));
