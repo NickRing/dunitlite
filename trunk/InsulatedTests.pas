@@ -127,7 +127,10 @@ begin
   ActualTest := FTestClass.Create(Name);
   ActualTest.GUIObject := GetGUIObject;
   if TestResultHack.ShouldRunTest(ActualTest) then
+  begin
+    Inc(TestResultHack.FRunTests);
     TestResultHack.Run(ActualTest);
+  end;
 end;
 
 procedure TTestInsulator.SetStatusListener(Listener: IStatusListener);
