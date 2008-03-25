@@ -57,6 +57,7 @@ type
   ['{A330ECD8-7B96-4EB1-AB91-6105DFBC8821}']
     function Be: IBeHelper;
     function Equal(AValue: TValue): IConstraint;
+    function ReferTo(AInstance: TObject): IConstraint;
   end;
 
   Should = class
@@ -64,6 +65,7 @@ type
     class function Be: IBeHelper;
     class function Equal(AValue: TValue): IConstraint; static;
     class function &Not: IShouldHelper; static;
+    class function ReferTo(AInstance: TObject): IConstraint; static;
     class function Yield(AValue: TValue): IConstraint; static;
   end;
 
@@ -91,6 +93,7 @@ type
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
     function OfType(AType: TClass): IConstraint;
+    function ReferTo(AInstance: TObject): IConstraint;
   end;
 
 implementation
@@ -132,6 +135,11 @@ end;
 class function Should.&Not: IShouldHelper;
 begin
   Result := TShouldNotHelper.Create;
+end;
+
+class function Should.ReferTo(AInstance: TObject): IConstraint;
+begin
+  Result := TRefersToObjectConstraint.CreateDefault(AInstance);
 end;
 
 class function Should.Yield(AValue: TValue): IConstraint;
@@ -238,6 +246,11 @@ end;
 function TShouldNotHelper.OfType(AType: TClass): IConstraint;
 begin
   Result := Negate(Should.Be.OfType(AType));
+end;
+
+function TShouldNotHelper.ReferTo(AInstance: TObject): IConstraint;
+begin
+  Result := Negate(Should.ReferTo(AInstance));
 end;
 
 end.
