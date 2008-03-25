@@ -128,6 +128,20 @@ type
     function Matches(AActualValue: TValue): Boolean; override;
   end;
 
+  TRefersToObjectConstraint = class(TBaseConstraint, IConstraint)
+  strict private
+    FInstance: TObject;
+  strict protected
+    function WithDifferentComparer(AComparer: IValueComparer): IConstraint; override;
+  public
+    constructor Create(AInstance: TObject; AComparer: IValueComparer);
+
+    class function CreateDefault(AInstance: TObject): IConstraint; static;
+
+    function ExpectedAndActual(AActualValue: TValue): TExpectedAndActual; override;
+    function Matches(AActualValue: TValue): Boolean; override;
+  end;
+
   TNotConstraint = class(TInterfacedObject, IConstraint)
   strict private
     FInner: IConstraint;
@@ -323,6 +337,42 @@ function TRangeConstraint.WithDifferentComparer(
 begin
   Result := TRangeConstraint.Create(FLowerBracket, FLowerBoundComparisons, FLowerBound,
     FUpperBoundComparisons, FUpperBound, FUpperBracket, AComparer);
+end;
+
+{ TRefersToObjectConstraint }
+
+constructor TRefersToObjectConstraint.Create(AInstance: TObject;
+  AComparer: IValueComparer);
+begin
+  inherited Create(AComparer);
+  FInstance := AInstance;
+end;
+
+class function TRefersToObjectConstraint.CreateDefault(
+  AInstance: TObject): IConstraint;
+begin
+  Result := TRefersToObjectConstraint.Create(AInstance, TDefaultValueComparer.Instance);
+end;
+
+function TRefersToObjectConstraint.ExpectedAndActual(
+  AActualValue: TValue): TExpectedAndActual;
+var
+  Expected: TValue;
+begin
+  Expected := FInstance;
+  Result.Expected := Expected.AsString;
+  Result.Actual := AActualValue.AsString;
+end;
+
+function TRefersToObjectConstraint.Matches(AActualValue: TValue): Boolean;
+begin
+  Result := AActualValue.RefersToObject(FInstance);
+end;
+
+function TRefersToObjectConstraint.WithDifferentComparer(
+  AComparer: IValueComparer): IConstraint;
+begin
+  Result := TRefersToObjectConstraint.Create(FInstance, AComparer);
 end;
 
 { TNotConstraint }

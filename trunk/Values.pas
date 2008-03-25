@@ -66,6 +66,7 @@ type
     function IndexOfFirstDifference(OtherValue: TValue; AComparer: IValueComparer): Integer;
     function Inspect(FirstDifferenceIndex: Integer): string;
     function IsOfType(AClass: TClass): Boolean;
+    function RefersToObject(AInstance: TObject): Boolean;
     function SameInstance(B: TValue): Boolean;
     function SameText(B: TValue): Boolean;
 
@@ -90,6 +91,7 @@ type
     function IndexOfFirstDifference(OtherValue: IValue; AComparer: IValueComparer): Integer;
     function Inspect(FirstDifferenceIndex: Integer): string;
     function IsOfType(AClass: TClass): Boolean;
+    function RefersToObject(AInstance: TObject): Boolean;
     function SameInstance(Other: IValue): Boolean;
     function SameText(Other: IValue): Boolean;
 
@@ -132,6 +134,7 @@ type
       AComparer: IValueComparer): Integer; virtual;
     function Inspect(FirstDifferenceIndex: Integer): string; virtual;
     function IsOfType(AClass: TClass): Boolean; virtual;
+    function RefersToObject(AInstance: TObject): Boolean; virtual;
     function SameInstance(Other: IValue): Boolean; virtual;
     function SameText(Other: IValue): Boolean;
   end;
@@ -216,6 +219,7 @@ type
     function GetClassName: string; override;
     function get_ObjectValue: TObject; override;
     function IsOfType(AClass: TClass): Boolean; override;
+    function RefersToObject(AInstance: TObject): Boolean; override;
     function SameInstance(Other: IValue): Boolean; override;
   end;
 
@@ -345,6 +349,11 @@ end;
 function TValue.IsOfType(AClass: TClass): Boolean;
 begin
   Result := FValue.IsOfType(AClass);
+end;
+
+function TValue.RefersToObject(AInstance: TObject): Boolean;
+begin
+  Result := FValue.RefersToObject(AInstance);
 end;
 
 function TValue.SameInstance(B: TValue): Boolean;
@@ -492,6 +501,11 @@ function TBaseValue.NotSupported(MethodName: string): Exception;
 begin
   Result := EInvalidOperation.CreateFmt('%s not supported for %s',
     [MethodName, ClassName]);
+end;
+
+function TBaseValue.RefersToObject(AInstance: TObject): Boolean;
+begin
+  raise NotSupported('RefersToObject');
 end;
 
 function TBaseValue.SameInstance(Other: IValue): Boolean;
@@ -730,6 +744,11 @@ end;
 function TObjectValue.IsOfType(AClass: TClass): Boolean;
 begin
   Result := (FValue <> nil) and (FValue.ClassType = AClass);
+end;
+
+function TObjectValue.RefersToObject(AInstance: TObject): Boolean;
+begin
+  Result := FValue = AInstance;
 end;
 
 function TObjectValue.SameInstance(Other: IValue): Boolean;

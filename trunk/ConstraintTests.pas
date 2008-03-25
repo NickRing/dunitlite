@@ -54,6 +54,7 @@ type
     function LessThan(const AExpectedValue: TValue): IConstraint;
     function LessThanOrEqualTo(const AExpectedValue: TValue): IConstraint;
     function NotEqualTo(const AExpectedValue: TValue): IConstraint;
+    function RefersTo(AExpectedValue: TObject): IConstraint;
   end;
 
   TestBetweenConstraint = class(TConstraintTestCase)
@@ -150,6 +151,15 @@ type
     procedure TestStringFailureMessage;
   end;
 
+  TestRefersToConstraint = class(TConstraintTestCase)
+  published
+    procedure TestMatchesObjects;
+    procedure TestDoesNotMatchObjects;
+    procedure TestObjectDoesNotMatchNil;
+    procedure TestNilDoesNotMatchObject;
+    procedure TestObjectObjectFailureMessage;
+  end;
+
 implementation
 
 uses
@@ -226,6 +236,11 @@ end;
 function TConstraintTestCase.NotEqualTo(const AExpectedValue: TValue): IConstraint;
 begin
   Result := TNotConstraint.Create(EqualTo(AExpectedValue));
+end;
+
+function TConstraintTestCase.RefersTo(AExpectedValue: TObject): IConstraint;
+begin
+  Result := TRefersToObjectConstraint.CreateDefault(AExpectedValue);
 end;
 
 { TestBetweenConstraint }
@@ -529,6 +544,50 @@ begin
   CheckExpectedAndActualStrings('not ''1''', '''1''', '1', NotEqualTo('1'));
 end;
 
+{ TestRefersToConstraint }
+
+procedure TestRefersToConstraint.TestDoesNotMatchObjects;
+var
+  OtherObject: TObject;
+begin
+  OtherObject := TObject.Create;
+  try
+    CheckDoesNotMatch(Self, RefersTo(OtherObject));
+  finally
+    FreeAndNil(OtherObject);
+  end;
+end;
+
+procedure TestRefersToConstraint.TestMatchesObjects;
+begin
+  CheckMatches(Self, RefersTo(Self));
+end;
+
+procedure TestRefersToConstraint.TestNilDoesNotMatchObject;
+begin
+  CheckDoesNotMatch(nil, RefersTo(Self));
+end;
+
+procedure TestRefersToConstraint.TestObjectDoesNotMatchNil;
+begin
+  CheckDoesNotMatch(Self, RefersTo(nil));
+end;
+
+procedure TestRefersToConstraint.TestObjectObjectFailureMessage;
+var
+  OtherObject: TObject;
+begin
+  OtherObject := TObject.Create;
+  try
+    CheckExpectedAndActualStrings(
+      Format('%s($%.8x)', [ClassName, Integer(Self)]),
+      Format('TObject($%.8x)', [Integer(OtherObject)]),
+      OtherObject, RefersTo(Self));
+  finally
+    FreeAndNil(OtherObject);
+  end;
+end;
+
 initialization
   TestBetweenConstraint.Register;
   TestEqualConstraint.Register;
@@ -539,4 +598,5 @@ initialization
   TestLessThanConstraint.Register;
   TestLessThanOrEqualToConstraint.Register;
   TestNotConstraint.Register;
+  TestRefersToConstraint.Register;
 end.

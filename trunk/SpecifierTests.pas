@@ -73,6 +73,11 @@ type
     procedure TestPassingShouldNotBeOfType;
     procedure TestPassingShouldNotBeOfTypeWhenNil;
     procedure TestFailingShouldNotBeOfType;
+    // Reference: Should.ReferTo
+    procedure TestPassingShouldReferTo;
+    procedure TestFailingShouldReferTo;
+    procedure TestPassingShouldNotReferTo;
+    procedure TestFailingShouldNotReferTo;
     // Inequality: Should.Be.AtLeast
     procedure TestPassingShouldBeAtLeast;
     procedure TestFailingShouldBeAtLeast;
@@ -282,6 +287,18 @@ begin
     'Expected: not 1.25 (to within 0.5)'#13#10' but was: 1');
 end;
 
+procedure TestSpecify.TestFailingShouldNotReferTo;
+begin
+  SpecifyShouldFail(FBase, Should.Not.ReferTo(FBase),
+    Format('Expected: not TBase($%.8x)'#13#10' but was: TBase($%0:.8x)', [Integer(FBase)]));
+end;
+
+procedure TestSpecify.TestFailingShouldReferTo;
+begin
+  SpecifyShouldFail(FBase, Should.ReferTo(nil),
+    Format('Expected: nil object'#13#10' but was: TBase($%.8x)', [Integer(FBase)]));
+end;
+
 procedure TestSpecify.TestFailingWithMessage;
 begin
   SpecifyShouldFailGivenMessage(2, Should.Equal(1), 'One',
@@ -394,6 +411,16 @@ end;
 procedure TestSpecify.TestPassingShouldNotEqualToWithin;
 begin
   Specify.That(1.0, Should.Not.Equal(1.75).ToWithin(0.5));
+end;
+
+procedure TestSpecify.TestPassingShouldNotReferTo;
+begin
+  Specify.That(FBase, Should.Not.ReferTo(nil));
+end;
+
+procedure TestSpecify.TestPassingShouldReferTo;
+begin
+  Specify.That(FBase, Should.ReferTo(FBase));
 end;
 
 procedure TestSpecify.TestPassingWithMessage;
