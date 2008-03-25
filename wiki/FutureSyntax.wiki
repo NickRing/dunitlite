@@ -1,9 +1,8 @@
 #summary Syntax that may be added in future versions of NUnitLite
 
 {{{
-// Reference equality (possible syntaxes):
+// Reference equality for interfaces: (already supported for objects)
 Specify.That(Foo, Should.ReferTo(Bar));
-Specify.That(Foo, Should.Be.SameReferenceAs(Bar));
 
 // Type:
 Specify.That(Foo, Should.DescendFrom(TComponent));
