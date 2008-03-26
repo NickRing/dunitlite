@@ -24,10 +24,4 @@ Specify.That(Foo, Should.Be.Even);
 Specify.That(Foo, Should.Be.Negative);
 Specify.That(Foo, Should.Be.Odd);
 Specify.That(Foo, Should.Be.Positive);
-
-// Specific values:
-Specify.That(Foo, Should.Be.False);
-Specify.That(Foo, Should.Be.Nil);
-Specify.That(Foo, Should.Be.True);
-Specify.That(Foo, Should.Be.Zero);
 }}}
