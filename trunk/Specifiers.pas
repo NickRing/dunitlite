@@ -44,6 +44,7 @@ type
 
   IBeHelper = interface
   ['{786D9F88-3DB3-4B4C-905E-94A8BBD0AA11}']
+    function Assigned: IConstraint;
     function AtLeast(AValue: TValue): IConstraint;
     function AtMost(AValue: TValue): IConstraint;
     function Between(ALowerBound, AUpperBound: TValue): IConstraint;
@@ -52,6 +53,7 @@ type
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
     function LessThanOrEqualTo(AValue: TValue): IConstraint;
+    function Null: IConstraint;
     function OfType(AType: TClass): IConstraint;
   end;
 
@@ -73,6 +75,7 @@ type
 
   TBeHelper = class(TInterfacedObject, IBeHelper)
   public
+    function Assigned: IConstraint;
     function AtLeast(AValue: TValue): IConstraint;
     function AtMost(AValue: TValue): IConstraint;
     function Between(ALowerBound, AUpperBound: TValue): IConstraint;
@@ -81,6 +84,7 @@ type
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
     function LessThanOrEqualTo(AValue: TValue): IConstraint;
+    function Null: IConstraint;
     function OfType(AType: TClass): IConstraint;
   end;
 
@@ -88,6 +92,7 @@ type
   strict private
     function Negate(AConstraint: IConstraint): IConstraint;
   public
+    function Assigned: IConstraint;
     function AtLeast(AValue: TValue): IConstraint;
     function AtMost(AValue: TValue): IConstraint;
     function Be: IBeHelper;
@@ -98,6 +103,7 @@ type
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
     function LessThanOrEqualTo(AValue: TValue): IConstraint;
+    function Null: IConstraint;
     function OfType(AType: TClass): IConstraint;
     function ReferTo(AInstance: TObject): IConstraint;
   end;
@@ -165,6 +171,11 @@ end;
 
 { TBeHelper }
 
+function TBeHelper.Assigned: IConstraint;
+begin
+  Result := Should.Not.Be.Null;
+end;
+
 function TBeHelper.AtLeast(AValue: TValue): IConstraint;
 begin
   Result := TComparisonConstraint.CreateGreaterThanOrEqualTo(AValue);
@@ -205,12 +216,22 @@ begin
   Result := AtMost(AValue);
 end;
 
+function TBeHelper.Null: IConstraint;
+begin
+  Result := Should.ReferTo(nil);
+end;
+
 function TBeHelper.OfType(AType: TClass): IConstraint;
 begin
   Result := TIsOfTypeConstraint.CreateDefault(AType);
 end;
 
 { TShouldNotHelper }
+
+function TShouldNotHelper.Assigned: IConstraint;
+begin
+  Result := Should.Be.Null;
+end;
 
 function TShouldNotHelper.AtLeast(AValue: TValue): IConstraint;
 begin
@@ -267,6 +288,11 @@ end;
 function TShouldNotHelper.Negate(AConstraint: IConstraint): IConstraint;
 begin
   Result := TNotConstraint.Create(AConstraint);
+end;
+
+function TShouldNotHelper.Null: IConstraint;
+begin
+  Result := Negate(Should.Be.Null);
 end;
 
 function TShouldNotHelper.OfType(AType: TClass): IConstraint;
