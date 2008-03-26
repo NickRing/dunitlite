@@ -66,6 +66,16 @@ type
     procedure TestPassingShouldNotEqualExactly;
     procedure TestFailingShouldNotEqualExactly;
     procedure TestFailingLongStringsShouldEqual;
+    // Equality: Should.Be.True
+    procedure TestPassingShouldBeTrue;
+    procedure TestFailingShouldBeTrue;
+    procedure TestPassingShouldNotBeTrue;
+    procedure TestFailingShouldNotBeTrue;
+    // Equality: Should.Be.False
+    procedure TestPassingShouldBeFalse;
+    procedure TestFailingShouldBeFalse;
+    procedure TestPassingShouldNotBeFalse;
+    procedure TestFailingShouldNotBeFalse;
     // Class: Should.Be.OfType
     procedure TestPassingShouldBeOfType;
     procedure TestFailingShouldBeOfType;
@@ -192,6 +202,11 @@ begin
     'Expected: in range (1, 3)'#13#10' but was: 0');
 end;
 
+procedure TestSpecify.TestFailingShouldBeFalse;
+begin
+  SpecifyShouldFail(True, Should.Be.False, 'Expected: False'#13#10' but was: True');
+end;
+
 procedure TestSpecify.TestFailingShouldBeGreaterThan;
 begin
   SpecifyShouldFail(2, Should.Be.GreaterThan(2),
@@ -226,6 +241,11 @@ procedure TestSpecify.TestFailingShouldBeOfTypeWhenNil;
 begin
   SpecifyShouldFail(nil, Should.Be.OfType(TObject),
     'Expected: TObject'#13#10' but was: nil object');
+end;
+
+procedure TestSpecify.TestFailingShouldBeTrue;
+begin
+  SpecifyShouldFail(False, Should.Be.True, 'Expected: True'#13#10' but was: False');
 end;
 
 procedure TestSpecify.TestFailingShouldEqual;
@@ -274,6 +294,12 @@ begin
     'Expected: not in range (1, 3)'#13#10' but was: 2');
 end;
 
+procedure TestSpecify.TestFailingShouldNotBeFalse;
+begin
+  SpecifyShouldFail(False, Should.Not.Be.False,
+    'Expected: not False'#13#10' but was: False');
+end;
+
 procedure TestSpecify.TestFailingShouldNotBeGreaterThan;
 begin
   SpecifyShouldFail(3, Should.Not.Be.GreaterThan(2),
@@ -302,6 +328,12 @@ procedure TestSpecify.TestFailingShouldNotBeOfType;
 begin
   SpecifyShouldFail(FBase, Should.Not.Be.OfType(TBase),
     'Expected: not TBase'#13#10' but was: TBase');
+end;
+
+procedure TestSpecify.TestFailingShouldNotBeTrue;
+begin
+  SpecifyShouldFail(True, Should.Not.Be.True,
+    'Expected: not True'#13#10' but was: True');
 end;
 
 procedure TestSpecify.TestFailingShouldNotEqual;
@@ -361,6 +393,11 @@ begin
   Specify.That(2, Should.Be.Between(1, 3));
 end;
 
+procedure TestSpecify.TestPassingShouldBeFalse;
+begin
+  Specify.That(False, Should.Be.False);
+end;
+
 procedure TestSpecify.TestPassingShouldBeGreaterThan;
 begin
   Specify.That(3, Should.Be.GreaterThan(2));
@@ -384,6 +421,11 @@ end;
 procedure TestSpecify.TestPassingShouldBeOfType;
 begin
   Specify.That(FBase, Should.Be.OfType(TBase));
+end;
+
+procedure TestSpecify.TestPassingShouldBeTrue;
+begin
+  Specify.That(True, Should.Be.True);
 end;
 
 procedure TestSpecify.TestPassingShouldEqual;
@@ -421,6 +463,11 @@ begin
   Specify.That(0, Should.Not.Be.Between(1, 3));
 end;
 
+procedure TestSpecify.TestPassingShouldNotBeFalse;
+begin
+  Specify.That(True, Should.Not.Be.False);
+end;
+
 procedure TestSpecify.TestPassingShouldNotBeGreaterThan;
 begin
   Specify.That(2, Should.Not.Be.GreaterThan(2));
@@ -449,6 +496,11 @@ end;
 procedure TestSpecify.TestPassingShouldNotBeOfTypeWhenNil;
 begin
   Specify.That(nil, Should.Not.Be.OfType(TObject));
+end;
+
+procedure TestSpecify.TestPassingShouldNotBeTrue;
+begin
+  Specify.That(False, Should.Not.Be.True);
 end;
 
 procedure TestSpecify.TestPassingShouldNotEqual;
