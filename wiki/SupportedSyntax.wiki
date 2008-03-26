@@ -18,9 +18,12 @@ Specify.That(Foo, Should.Be.AtLeast(45));
 Specify.That(Foo, Should.Be.AtMost(45));
 Specify.That(Foo, Should.Be.Between(45, 48));
 Specify.That(Foo, Should.Be.GreaterThan(45));
+Specify.That(Foo, Should.Be.GreaterThanOrEqualTo(45)); // v0.5+ only
 Specify.That(Foo, Should.Be.InRange(45, 48));
 Specify.That(Foo, Should.Be.LessThan(45));
+Specify.That(Foo, Should.Be.LessThanOrEqualTo(45)); // v0.5+ only
 }}}
+{{{AtLeast}}} and {{{GreaterThanOrEqualTo}}} are equivalent; use whichever name is more readable. The same goes for {{{AtMost}}} and {{{LessThanOrEqualTo}}}.
 == Type ==
 {{{
 Specify.That(Foo, Should.Be.OfType(TComponent));
