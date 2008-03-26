@@ -40,21 +40,11 @@ uses
 type
   TConstraintTestCase = class(TRegisterableSpecification)
   strict protected
-    function Between(const ALowerBound, AUpperBound: TValue): IConstraint;
     procedure CheckDoesNotMatch(const AActualValue: TValue; const Constraint: IConstraint);
     procedure CheckExpectedAndActualStrings(
       const ExpectedExpected, ExpectedActual: string;
       const AActualValue: TValue; const Constraint: IConstraint);
     procedure CheckMatches(const AActualValue: TValue; const Constraint: IConstraint);
-    function EqualTo(const AExpectedValue: TValue): IConstraint;
-    function GreaterThan(const AExpectedValue: TValue): IConstraint;
-    function GreaterThanOrEqualTo(const AExpectedValue: TValue): IConstraint;
-    function InRange(const ALowerBound, AUpperBound: TValue): IConstraint;
-    function IsOfType(AType: TClass): IConstraint;
-    function LessThan(const AExpectedValue: TValue): IConstraint;
-    function LessThanOrEqualTo(const AExpectedValue: TValue): IConstraint;
-    function NotEqualTo(const AExpectedValue: TValue): IConstraint;
-    function RefersTo(AExpectedValue: TObject): IConstraint;
   end;
 
   TestBetweenConstraint = class(TConstraintTestCase)
@@ -163,15 +153,10 @@ type
 implementation
 
 uses
+  Specifiers,
   SysUtils;
 
 { TConstraintTestCase }
-
-function TConstraintTestCase.Between(const ALowerBound,
-  AUpperBound: TValue): IConstraint;
-begin
-  Result := TRangeConstraint.CreateBetween(ALowerBound, AUpperBound);
-end;
 
 procedure TConstraintTestCase.CheckDoesNotMatch(const AActualValue: TValue;
   const Constraint: IConstraint);
@@ -196,187 +181,140 @@ begin
   CheckTrue(Constraint.Matches(AActualValue));
 end;
 
-function TConstraintTestCase.EqualTo(const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TComparisonConstraint.CreateEqualTo(AExpectedValue);
-end;
-
-function TConstraintTestCase.GreaterThan(const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TComparisonConstraint.CreateGreaterThan(AExpectedValue);
-end;
-
-function TConstraintTestCase.GreaterThanOrEqualTo(
-  const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TComparisonConstraint.CreateGreaterThanOrEqualTo(AExpectedValue);
-end;
-
-function TConstraintTestCase.InRange(const ALowerBound,
-  AUpperBound: TValue): IConstraint;
-begin
-  Result := TRangeConstraint.CreateInRange(ALowerBound, AUpperBound);
-end;
-
-function TConstraintTestCase.IsOfType(AType: TClass): IConstraint;
-begin
-  Result := TIsOfTypeConstraint.CreateDefault(AType);
-end;
-
-function TConstraintTestCase.LessThan(const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TComparisonConstraint.CreateLessThan(AExpectedValue);
-end;
-
-function TConstraintTestCase.LessThanOrEqualTo(const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TComparisonConstraint.CreateLessThanOrEqualTo(AExpectedValue);
-end;
-
-function TConstraintTestCase.NotEqualTo(const AExpectedValue: TValue): IConstraint;
-begin
-  Result := TNotConstraint.Create(EqualTo(AExpectedValue));
-end;
-
-function TConstraintTestCase.RefersTo(AExpectedValue: TObject): IConstraint;
-begin
-  Result := TRefersToObjectConstraint.CreateDefault(AExpectedValue);
-end;
-
 { TestBetweenConstraint }
 
 procedure TestBetweenConstraint.TestDoesNotMatchWhenEqualToLowerBound;
 begin
-  CheckDoesNotMatch(4.0, Between(4.0, 5.0));
+  CheckDoesNotMatch(4.0, Should.Be.Between(4.0, 5.0));
 end;
 
 procedure TestBetweenConstraint.TestDoesNotMatchWhenEqualToLowerBoundWithEpsilon;
 begin
-  CheckDoesNotMatch(4.125, Between(4.0, 5.0).ToWithin(0.25));
+  CheckDoesNotMatch(4.125, Should.Be.Between(4.0, 5.0).ToWithin(0.25));
 end;
 
 procedure TestBetweenConstraint.TestDoesNotMatchWhenEqualToUpperBound;
 begin
-  CheckDoesNotMatch(5.0, Between(4.0, 5.0));
+  CheckDoesNotMatch(5.0, Should.Be.Between(4.0, 5.0));
 end;
 
 procedure TestBetweenConstraint.TestDoesNotMatchWhenNearlyEqualToLowerBound;
 begin
   CheckDoesNotMatch(EpsilonTestValues.SameAtDefaultEpsilon,
-    Between(EpsilonTestValues.BaseValue, EpsilonTestValues.BaseValue + 1));
+    Should.Be.Between(EpsilonTestValues.BaseValue, EpsilonTestValues.BaseValue + 1));
 end;
 
 procedure TestBetweenConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('in range (1, 2)', '0', 0, Between(1, 2));
+  CheckExpectedAndActualStrings('in range (1, 2)', '0', 0, Should.Be.Between(1, 2));
 end;
 
 procedure TestBetweenConstraint.TestMatches;
 begin
-  CheckMatches(4.5, Between(4.0, 5.0));
+  CheckMatches(4.5, Should.Be.Between(4.0, 5.0));
 end;
 
 procedure TestBetweenConstraint.TestMatchesWhenNearlyEqualToLowerBoundWithExactComparison;
 begin
   CheckMatches(EpsilonTestValues.SameAtDefaultEpsilon,
-    Between(EpsilonTestValues.BaseValue, EpsilonTestValues.BaseValue + 1).Exactly);
+    Should.Be.Between(EpsilonTestValues.BaseValue, EpsilonTestValues.BaseValue + 1).Exactly);
 end;
 
 procedure TestBetweenConstraint.TestStringFailureMessage;
 begin
   CheckExpectedAndActualStrings('in range (''1'', ''2'')', '''0''',
-    '0', Between('1', '2'));
+    '0', Should.Be.Between('1', '2'));
 end;
 
 { TestEqualConstraint }
 
 procedure TestEqualConstraint.TestDoesNotMatch;
 begin
-  CheckDoesNotMatch(5, EqualTo(4));
+  CheckDoesNotMatch(5, Should.Equal(4));
 end;
 
 procedure TestEqualConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('1', '2', 2, EqualTo(1));
+  CheckExpectedAndActualStrings('1', '2', 2, Should.Equal(1));
 end;
 
 procedure TestEqualConstraint.TestMatches;
 begin
-  CheckMatches(4, EqualTo(4));
+  CheckMatches(4, Should.Equal(4));
 end;
 
 procedure TestEqualConstraint.TestMatchesWithEpsilon;
 begin
-  CheckMatches(4.25, EqualTo(4).ToWithin(0.5));
+  CheckMatches(4.25, Should.Equal(4).ToWithin(0.5));
 end;
 
 procedure TestEqualConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('''1''', '''2''', '2', EqualTo('1'));
+  CheckExpectedAndActualStrings('''1''', '''2''', '2', Should.Equal('1'));
 end;
 
 { TestGreaterThanConstraint }
 
 procedure TestGreaterThanConstraint.TestDoesNotMatchWhenEqual;
 begin
-  CheckDoesNotMatch(4.0, GreaterThan(4.0));
+  CheckDoesNotMatch(4.0, Should.Be.GreaterThan(4.0));
 end;
 
 procedure TestGreaterThanConstraint.TestDoesNotMatchWhenEqualWithEpsilon;
 begin
-  CheckDoesNotMatch(4.25, GreaterThan(4.0).ToWithin(0.5));
+  CheckDoesNotMatch(4.25, Should.Be.GreaterThan(4.0).ToWithin(0.5));
 end;
 
 procedure TestGreaterThanConstraint.TestDoesNotMatchWhenLess;
 begin
-  CheckDoesNotMatch(3.75, GreaterThan(4.0));
+  CheckDoesNotMatch(3.75, Should.Be.GreaterThan(4.0));
 end;
 
 procedure TestGreaterThanConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('> 1', '1', 1, GreaterThan(1));
+  CheckExpectedAndActualStrings('> 1', '1', 1, Should.Be.GreaterThan(1));
 end;
 
 procedure TestGreaterThanConstraint.TestMatchesWhenGreater;
 begin
-  CheckMatches(4.25, GreaterThan(4.0));
+  CheckMatches(4.25, Should.Be.GreaterThan(4.0));
 end;
 
 procedure TestGreaterThanConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('> ''1''', '''1''', '1', GreaterThan('1'));
+  CheckExpectedAndActualStrings('> ''1''', '''1''', '1', Should.Be.GreaterThan('1'));
 end;
 
 { TestGreaterThanOrEqualToConstraint }
 
 procedure TestGreaterThanOrEqualToConstraint.TestDoesNotMatchWhenLess;
 begin
-  CheckDoesNotMatch(3.75, GreaterThanOrEqualTo(4.0));
+  CheckDoesNotMatch(3.75, Should.Be.GreaterThanOrEqualTo(4.0));
 end;
 
 procedure TestGreaterThanOrEqualToConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('>= 1', '0', 0, GreaterThanOrEqualTo(1));
+  CheckExpectedAndActualStrings('>= 1', '0', 0, Should.Be.GreaterThanOrEqualTo(1));
 end;
 
 procedure TestGreaterThanOrEqualToConstraint.TestMatchesWhenEqual;
 begin
-  CheckMatches(4.0, GreaterThanOrEqualTo(4.0));
+  CheckMatches(4.0, Should.Be.GreaterThanOrEqualTo(4.0));
 end;
 
 procedure TestGreaterThanOrEqualToConstraint.TestMatchesWhenEqualWithEpsilon;
 begin
-  CheckMatches(3.75, GreaterThanOrEqualTo(4.0).ToWithin(0.5));
+  CheckMatches(3.75, Should.Be.GreaterThanOrEqualTo(4.0).ToWithin(0.5));
 end;
 
 procedure TestGreaterThanOrEqualToConstraint.TestMatchesWhenGreater;
 begin
-  CheckMatches(4.25, GreaterThanOrEqualTo(4.0));
+  CheckMatches(4.25, Should.Be.GreaterThanOrEqualTo(4.0));
 end;
 
 procedure TestGreaterThanOrEqualToConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('>= ''1''', '''0''', '0', GreaterThanOrEqualTo('1'));
+  CheckExpectedAndActualStrings('>= ''1''', '''0''', '0', Should.Be.GreaterThanOrEqualTo('1'));
 end;
 
 { TestInRangeConstraint }
@@ -384,44 +322,44 @@ end;
 procedure TestInRangeConstraint.TestDoesNotMatchWhenNearlyEqualToLowerBoundWithExactComparison;
 begin
   CheckDoesNotMatch(EpsilonTestValues.BaseValue,
-    Between(EpsilonTestValues.SameAtDefaultEpsilon, EpsilonTestValues.BaseValue + 1).Exactly);
+    Should.Be.Between(EpsilonTestValues.SameAtDefaultEpsilon, EpsilonTestValues.BaseValue + 1).Exactly);
 end;
 
 procedure TestInRangeConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('in range [1, 2]', '0', 0, InRange(1, 2));
+  CheckExpectedAndActualStrings('in range [1, 2]', '0', 0, Should.Be.InRange(1, 2));
 end;
 
 procedure TestInRangeConstraint.TestMatchesWhenBetween;
 begin
-  CheckMatches(4.5, InRange(4.0, 5.0));
+  CheckMatches(4.5, Should.Be.InRange(4.0, 5.0));
 end;
 
 procedure TestInRangeConstraint.TestMatchesWhenEqualToLowerBound;
 begin
-  CheckMatches(4.0, InRange(4.0, 5.0));
+  CheckMatches(4.0, Should.Be.InRange(4.0, 5.0));
 end;
 
 procedure TestInRangeConstraint.TestMatchesWhenEqualToLowerBoundWithEpsilon;
 begin
-  CheckMatches(3.875, InRange(4.0, 5.0).ToWithin(0.25));
+  CheckMatches(3.875, Should.Be.InRange(4.0, 5.0).ToWithin(0.25));
 end;
 
 procedure TestInRangeConstraint.TestMatchesWhenEqualToUpperBound;
 begin
-  CheckMatches(5.0, InRange(4.0, 5.0));
+  CheckMatches(5.0, Should.Be.InRange(4.0, 5.0));
 end;
 
 procedure TestInRangeConstraint.TestMatchesWhenNearlyEqualToLowerBound;
 begin
   CheckMatches(EpsilonTestValues.BaseValue,
-    InRange(EpsilonTestValues.SameAtDefaultEpsilon, EpsilonTestValues.BaseValue + 1));
+    Should.Be.InRange(EpsilonTestValues.SameAtDefaultEpsilon, EpsilonTestValues.BaseValue + 1));
 end;
 
 procedure TestInRangeConstraint.TestStringFailureMessage;
 begin
   CheckExpectedAndActualStrings('in range [''1'', ''2'']', '''0''',
-    '0', InRange('1', '2'));
+    '0', Should.Be.InRange('1', '2'));
 end;
 
 { TestIsOfTypeConstraint }
@@ -440,108 +378,108 @@ end;
 
 procedure TestIsOfTypeConstraint.TestDoesNotMatchWhenBaseType;
 begin
-  CheckDoesNotMatch(FBase, IsOfType(TObject));
+  CheckDoesNotMatch(FBase, Should.Be.OfType(TObject));
 end;
 
 procedure TestIsOfTypeConstraint.TestDoesNotMatchWhenDescendantType;
 begin
-  CheckDoesNotMatch(FBase, IsOfType(TSub));
+  CheckDoesNotMatch(FBase, Should.Be.OfType(TSub));
 end;
 
 procedure TestIsOfTypeConstraint.TestMatchesWhenSameType;
 begin
-  CheckMatches(FBase, IsOfType(TBase));
+  CheckMatches(FBase, Should.Be.OfType(TBase));
 end;
 
 { TestLessThanConstraint }
 
 procedure TestLessThanConstraint.TestDoesNotMatchWhenEqual;
 begin
-  CheckDoesNotMatch(4.0, LessThan(4.0));
+  CheckDoesNotMatch(4.0, Should.Be.LessThan(4.0));
 end;
 
 procedure TestLessThanConstraint.TestDoesNotMatchWhenEqualWithEpsilon;
 begin
-  CheckDoesNotMatch(3.75, LessThan(4.0).ToWithin(0.5));
+  CheckDoesNotMatch(3.75, Should.Be.LessThan(4.0).ToWithin(0.5));
 end;
 
 procedure TestLessThanConstraint.TestDoesNotMatchWhenGreater;
 begin
-  CheckDoesNotMatch(4.25, LessThan(4.0));
+  CheckDoesNotMatch(4.25, Should.Be.LessThan(4.0));
 end;
 
 procedure TestLessThanConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('< 1', '1', 1, LessThan(1));
+  CheckExpectedAndActualStrings('< 1', '1', 1, Should.Be.LessThan(1));
 end;
 
 procedure TestLessThanConstraint.TestMatchesWhenLess;
 begin
-  CheckMatches(3.75, LessThan(4.0));
+  CheckMatches(3.75, Should.Be.LessThan(4.0));
 end;
 
 procedure TestLessThanConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('< ''1''', '''1''', '1', LessThan('1'));
+  CheckExpectedAndActualStrings('< ''1''', '''1''', '1', Should.Be.LessThan('1'));
 end;
 
 { TestLessThanOrEqualToConstraint }
 
 procedure TestLessThanOrEqualToConstraint.TestDoesNotMatchWhenGreater;
 begin
-  CheckDoesNotMatch(4.25, LessThanOrEqualTo(4.0));
+  CheckDoesNotMatch(4.25, Should.Be.LessThanOrEqualTo(4.0));
 end;
 
 procedure TestLessThanOrEqualToConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('<= 1', '2', 2, LessThanOrEqualTo(1));
+  CheckExpectedAndActualStrings('<= 1', '2', 2, Should.Be.LessThanOrEqualTo(1));
 end;
 
 procedure TestLessThanOrEqualToConstraint.TestMatchesWhenEqual;
 begin
-  CheckMatches(4.0, LessThanOrEqualTo(4.0));
+  CheckMatches(4.0, Should.Be.LessThanOrEqualTo(4.0));
 end;
 
 procedure TestLessThanOrEqualToConstraint.TestMatchesWhenEqualWithEpsilon;
 begin
-  CheckMatches(4.25, LessThanOrEqualTo(4.0).ToWithin(0.5));
+  CheckMatches(4.25, Should.Be.LessThanOrEqualTo(4.0).ToWithin(0.5));
 end;
 
 procedure TestLessThanOrEqualToConstraint.TestMatchesWhenLess;
 begin
-  CheckMatches(3.75, LessThanOrEqualTo(4.0));
+  CheckMatches(3.75, Should.Be.LessThanOrEqualTo(4.0));
 end;
 
 procedure TestLessThanOrEqualToConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('<= ''1''', '''2''', '2', LessThanOrEqualTo('1'));
+  CheckExpectedAndActualStrings('<= ''1''', '''2''', '2', Should.Be.LessThanOrEqualTo('1'));
 end;
 
 { TestNotConstraint }
 
 procedure TestNotConstraint.TestDoesNotMatch;
 begin
-  CheckDoesNotMatch(4, NotEqualTo(4));
+  CheckDoesNotMatch(4, Should.Not.Equal(4));
 end;
 
 procedure TestNotConstraint.TestDoesNotMatchWithEpsilon;
 begin
-  CheckDoesNotMatch(4.25, NotEqualTo(4).ToWithin(0.5));
+  CheckDoesNotMatch(4.25, Should.Not.Equal(4).ToWithin(0.5));
 end;
 
 procedure TestNotConstraint.TestIntegerFailureMessage;
 begin
-  CheckExpectedAndActualStrings('not 1', '1', 1, NotEqualTo(1));
+  CheckExpectedAndActualStrings('not 1', '1', 1, Should.Not.Equal(1));
 end;
 
 procedure TestNotConstraint.TestMatches;
 begin
-  CheckMatches(5, NotEqualTo(4));
+  CheckMatches(5, Should.Not.Equal(4));
 end;
 
 procedure TestNotConstraint.TestStringFailureMessage;
 begin
-  CheckExpectedAndActualStrings('not ''1''', '''1''', '1', NotEqualTo('1'));
+  CheckExpectedAndActualStrings('not ''1''', '''1''', '1', Should.Not.Equal('1'));
 end;
 
 { TestRefersToConstraint }
@@ -552,7 +490,7 @@ var
 begin
   OtherObject := TObject.Create;
   try
-    CheckDoesNotMatch(Self, RefersTo(OtherObject));
+    CheckDoesNotMatch(Self, Should.ReferTo(OtherObject));
   finally
     FreeAndNil(OtherObject);
   end;
@@ -560,17 +498,17 @@ end;
 
 procedure TestRefersToConstraint.TestMatchesObjects;
 begin
-  CheckMatches(Self, RefersTo(Self));
+  CheckMatches(Self, Should.ReferTo(Self));
 end;
 
 procedure TestRefersToConstraint.TestNilDoesNotMatchObject;
 begin
-  CheckDoesNotMatch(nil, RefersTo(Self));
+  CheckDoesNotMatch(nil, Should.ReferTo(Self));
 end;
 
 procedure TestRefersToConstraint.TestObjectDoesNotMatchNil;
 begin
-  CheckDoesNotMatch(Self, RefersTo(nil));
+  CheckDoesNotMatch(Self, Should.ReferTo(nil));
 end;
 
 procedure TestRefersToConstraint.TestObjectObjectFailureMessage;
@@ -582,7 +520,7 @@ begin
     CheckExpectedAndActualStrings(
       Format('%s($%.8x)', [ClassName, Integer(Self)]),
       Format('TObject($%.8x)', [Integer(OtherObject)]),
-      OtherObject, RefersTo(Self));
+      OtherObject, Should.ReferTo(Self));
   finally
     FreeAndNil(OtherObject);
   end;
