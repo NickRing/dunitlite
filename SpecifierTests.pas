@@ -78,6 +78,16 @@ type
     procedure TestFailingShouldReferTo;
     procedure TestPassingShouldNotReferTo;
     procedure TestFailingShouldNotReferTo;
+    // Reference: Should.Be.Assigned
+    procedure TestPassingShouldBeAssigned;
+    procedure TestFailingShouldBeAssigned;
+    procedure TestPassingShouldNotBeAssigned;
+    procedure TestFailingShouldNotBeAssigned;
+    // Reference: Should.Be.Nil
+    procedure TestPassingShouldBeNull;
+    procedure TestFailingShouldBeNull;
+    procedure TestPassingShouldNotBeNull;
+    procedure TestFailingShouldNotBeNull;
     // Inequality: Should.Be.AtLeast
     procedure TestPassingShouldBeAtLeast;
     procedure TestFailingShouldBeAtLeast;
@@ -160,6 +170,12 @@ begin
     ' but was: ...''<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<1>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>''...');
 end;
 
+procedure TestSpecify.TestFailingShouldBeAssigned;
+begin
+  SpecifyShouldFail(nil, Should.Be.Assigned,
+    'Expected: not nil object'#13#10' but was: nil object');
+end;
+
 procedure TestSpecify.TestFailingShouldBeAtLeast;
 begin
   SpecifyShouldFail(1, Should.Be.AtLeast(2), 'Expected: >= 2'#13#10' but was: 1');
@@ -194,6 +210,12 @@ begin
     'Expected: < 3'#13#10' but was: 3');
 end;
 
+procedure TestSpecify.TestFailingShouldBeNull;
+begin
+  SpecifyShouldFail(FBase, Should.Be.Null,
+    Format('Expected: nil object'#13#10' but was: TBase($%.8x)', [Integer(FBase)]));
+end;
+
 procedure TestSpecify.TestFailingShouldBeOfType;
 begin
   SpecifyShouldFail(FBase, Should.Be.OfType(TObject),
@@ -222,6 +244,12 @@ procedure TestSpecify.TestFailingShouldEqualToWithin;
 begin
   SpecifyShouldFail(1.0, Should.Equal(1.75).ToWithin(0.5),
     'Expected: 1.75 (to within 0.5)'#13#10' but was: 1');
+end;
+
+procedure TestSpecify.TestFailingShouldNotBeAssigned;
+begin
+  SpecifyShouldFail(FBase, Should.Not.Be.Assigned,
+    Format('Expected: nil object'#13#10' but was: TBase($%.8x)', [Integer(FBase)]));
 end;
 
 procedure TestSpecify.TestFailingShouldNotBeAtLeast;
@@ -262,6 +290,12 @@ procedure TestSpecify.TestFailingShouldNotBeLessThan;
 begin
   SpecifyShouldFail(2, Should.Not.Be.LessThan(3),
     'Expected: not < 3'#13#10' but was: 2');
+end;
+
+procedure TestSpecify.TestFailingShouldNotBeNull;
+begin
+  SpecifyShouldFail(nil, Should.Not.Be.Null,
+    'Expected: not nil object'#13#10' but was: nil object');
 end;
 
 procedure TestSpecify.TestFailingShouldNotBeOfType;
@@ -305,6 +339,11 @@ begin
     'One'#13#10'Expected: 1'#13#10' but was: 2');
 end;
 
+procedure TestSpecify.TestPassingShouldBeAssigned;
+begin
+  Specify.That(FBase, Should.Be.Assigned);
+end;
+
 procedure TestSpecify.TestPassingShouldBeAtLeast;
 begin
   Specify.That(1, Should.Be.AtLeast(1));
@@ -337,6 +376,11 @@ begin
   Specify.That(2, Should.Be.LessThan(3));
 end;
 
+procedure TestSpecify.TestPassingShouldBeNull;
+begin
+  Specify.That(nil, Should.Be.Null);
+end;
+
 procedure TestSpecify.TestPassingShouldBeOfType;
 begin
   Specify.That(FBase, Should.Be.OfType(TBase));
@@ -355,6 +399,11 @@ end;
 procedure TestSpecify.TestPassingShouldEqualToWithin;
 begin
   Specify.That(1.0, Should.Equal(1.25).ToWithin(0.5));
+end;
+
+procedure TestSpecify.TestPassingShouldNotBeAssigned;
+begin
+  Specify.That(nil, Should.Not.Be.Assigned);
 end;
 
 procedure TestSpecify.TestPassingShouldNotBeAtLeast;
@@ -385,6 +434,11 @@ end;
 procedure TestSpecify.TestPassingShouldNotBeLessThan;
 begin
   Specify.That(3, Should.Not.Be.LessThan(3));
+end;
+
+procedure TestSpecify.TestPassingShouldNotBeNull;
+begin
+  Specify.That(FBase, Should.Not.Be.Null);
 end;
 
 procedure TestSpecify.TestPassingShouldNotBeOfType;
