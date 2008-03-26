@@ -48,8 +48,10 @@ type
     function AtMost(AValue: TValue): IConstraint;
     function Between(ALowerBound, AUpperBound: TValue): IConstraint;
     function GreaterThan(AValue: TValue): IConstraint;
+    function GreaterThanOrEqualTo(AValue: TValue): IConstraint;
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
+    function LessThanOrEqualTo(AValue: TValue): IConstraint;
     function OfType(AType: TClass): IConstraint;
   end;
 
@@ -75,8 +77,10 @@ type
     function AtMost(AValue: TValue): IConstraint;
     function Between(ALowerBound, AUpperBound: TValue): IConstraint;
     function GreaterThan(AValue: TValue): IConstraint;
+    function GreaterThanOrEqualTo(AValue: TValue): IConstraint;
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
+    function LessThanOrEqualTo(AValue: TValue): IConstraint;
     function OfType(AType: TClass): IConstraint;
   end;
 
@@ -90,8 +94,10 @@ type
     function Between(ALowerBound, AUpperBound: TValue): IConstraint;
     function Equal(AValue: TValue): IConstraint;
     function GreaterThan(AValue: TValue): IConstraint;
+    function GreaterThanOrEqualTo(AValue: TValue): IConstraint;
     function InRange(ALowerBound, AUpperBound: TValue): IConstraint;
     function LessThan(AValue: TValue): IConstraint;
+    function LessThanOrEqualTo(AValue: TValue): IConstraint;
     function OfType(AType: TClass): IConstraint;
     function ReferTo(AInstance: TObject): IConstraint;
   end;
@@ -179,6 +185,11 @@ begin
   Result := TComparisonConstraint.CreateGreaterThan(AValue);
 end;
 
+function TBeHelper.GreaterThanOrEqualTo(AValue: TValue): IConstraint;
+begin
+  Result := AtLeast(AValue);
+end;
+
 function TBeHelper.InRange(ALowerBound, AUpperBound: TValue): IConstraint;
 begin
   Result := TRangeConstraint.CreateInRange(ALowerBound, AUpperBound);
@@ -187,6 +198,11 @@ end;
 function TBeHelper.LessThan(AValue: TValue): IConstraint;
 begin
   Result := TComparisonConstraint.CreateLessThan(AValue);
+end;
+
+function TBeHelper.LessThanOrEqualTo(AValue: TValue): IConstraint;
+begin
+  Result := AtMost(AValue);
 end;
 
 function TBeHelper.OfType(AType: TClass): IConstraint;
@@ -227,6 +243,11 @@ begin
   Result := Negate(Should.Be.GreaterThan(AValue));
 end;
 
+function TShouldNotHelper.GreaterThanOrEqualTo(AValue: TValue): IConstraint;
+begin
+  Result := Negate(Should.Be.GreaterThanOrEqualTo(AValue));
+end;
+
 function TShouldNotHelper.InRange(ALowerBound,
   AUpperBound: TValue): IConstraint;
 begin
@@ -236,6 +257,11 @@ end;
 function TShouldNotHelper.LessThan(AValue: TValue): IConstraint;
 begin
   Result := Negate(Should.Be.LessThan(AValue));
+end;
+
+function TShouldNotHelper.LessThanOrEqualTo(AValue: TValue): IConstraint;
+begin
+  Result := Negate(Should.Be.LessThanOrEqualTo(AValue));
 end;
 
 function TShouldNotHelper.Negate(AConstraint: IConstraint): IConstraint;
