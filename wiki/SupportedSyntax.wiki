@@ -28,6 +28,13 @@ Specify.That(Foo, Should.Be.LessThanOrEqualTo(45)); // v0.5+ only
 {{{
 Specify.That(Foo, Should.Be.OfType(TComponent));
 }}}
+== Specific values ==
+{{{
+Specify.That(Foo, Should.Be.Assigned); // v0.5+ only
+Specify.That(Foo, Should.Be.Null); // v0.5+ only
+Specify.That(Foo, Should.Be.True); // v0.5+ only
+Specify.That(Foo, Should.Be.False); // v0.5+ only
+}}}
 
 = Additional options for comparisons =
 == Messages ==
