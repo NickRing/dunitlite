@@ -38,8 +38,9 @@ uses
 type
   TSpecification = class(TInsulatedTest)
   strict protected type
-    Specify = Specifiers.Specify;
+    Given = Specifiers.Given;
     Should = Specifiers.Should;
+    Specify = Specifiers.Specify;
   end;
 
   TRegisterableSpecification = class(TSpecification)
