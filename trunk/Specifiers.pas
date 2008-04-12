@@ -42,6 +42,8 @@ type
       AMessage: string = ''); static;
   end;
 
+  Given = Specify;
+
   IBeHelper = interface
   ['{786D9F88-3DB3-4B4C-905E-94A8BBD0AA11}']
     function Assigned: IConstraint;
