@@ -1,4 +1,4 @@
-#summary Syntax that may be added in future versions of NUnitLite
+#summary Syntax that may be added in future versions of DUnitLite
 
 {{{
 // Type:
