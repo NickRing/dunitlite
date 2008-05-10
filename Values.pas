@@ -83,19 +83,17 @@ type
     function GetClassName: string;
     function GetEnumValue(ATypeInfo: PTypeInfo): Integer;
     function get_BooleanValue: Boolean;
-    function get_InterfaceValue: IInterface;
-    function get_ObjectValue: TObject;
     function get_PointValue: TPoint;
     function get_StringValue: string;
     function IndexOfFirstDifference(OtherValue: IValue; AComparer: IValueComparer): Integer;
     function Inspect(FirstDifferenceIndex: Integer): string;
     function IsOfType(AClass: TClass): Boolean;
     function SameInstance(Other: IValue): Boolean;
+    function SameInstanceAsInterface(Other: IInterface): Boolean;
+    function SameInstanceAsObject(Other: TObject): Boolean;
     function SameText(Other: IValue): Boolean;
 
     property BooleanValue: Boolean read get_BooleanValue;
-    property InterfaceValue: IInterface read get_InterfaceValue;
-    property ObjectValue: TObject read get_ObjectValue;
     property PointValue: TPoint read get_PointValue;
     property StringValue: string read get_StringValue;
   end;
@@ -112,6 +110,8 @@ type
     function IntegerValue: Integer; virtual;
     function InvalidCast(TargetType: string): Exception;
     function NotSupported(MethodName: string): Exception;
+    function SameInstanceInterfaceToInterface(A, B: IInterface): Boolean;
+    function SameInstanceInterfaceToObject(AInterface: IInterface; AObject: TObject): Boolean;
     function TypeName: string; virtual;
     class function TypeSupportsOrdering: Boolean; virtual;
   public
@@ -124,8 +124,6 @@ type
     function GetClassName: string; virtual;
     function GetEnumValue(ATypeInfo: PTypeInfo): Integer; virtual;
     function get_BooleanValue: Boolean; virtual;
-    function get_InterfaceValue: IInterface; virtual;
-    function get_ObjectValue: TObject; virtual;
     function get_PointValue: TPoint; virtual;
     function get_StringValue: string; virtual;
     function IndexOfFirstDifference(OtherValue: IValue;
@@ -133,6 +131,8 @@ type
     function Inspect(FirstDifferenceIndex: Integer): string; virtual;
     function IsOfType(AClass: TClass): Boolean; virtual;
     function SameInstance(Other: IValue): Boolean; virtual;
+    function SameInstanceAsInterface(Other: IInterface): Boolean; virtual;
+    function SameInstanceAsObject(Other: TObject): Boolean; virtual;
     function SameText(Other: IValue): Boolean;
   end;
 
@@ -203,8 +203,9 @@ type
   public
     constructor Create(AValue: IInterface);
     function AsString: string; override;
-    function get_InterfaceValue: IInterface; override;
     function SameInstance(Other: IValue): Boolean; override;
+    function SameInstanceAsInterface(Other: IInterface): Boolean; override;
+    function SameInstanceAsObject(Other: TObject): Boolean; override;
   end;
 
   TObjectValue = class(TBaseValue)
@@ -214,9 +215,10 @@ type
     constructor Create(AValue: TObject);
     function AsString: string; override;
     function GetClassName: string; override;
-    function get_ObjectValue: TObject; override;
     function IsOfType(AClass: TClass): Boolean; override;
     function SameInstance(Other: IValue): Boolean; override;
+    function SameInstanceAsInterface(Other: IInterface): Boolean; override;
+    function SameInstanceAsObject(Other: TObject): Boolean; override;
   end;
 
   TPointValue = class(TBaseValue)
@@ -436,16 +438,6 @@ begin
   raise InvalidCast('Boolean');
 end;
 
-function TBaseValue.get_InterfaceValue: IInterface;
-begin
-  raise InvalidCast('IInterface');
-end;
-
-function TBaseValue.get_ObjectValue: TObject;
-begin
-  raise InvalidCast('TObject');
-end;
-
 function TBaseValue.get_PointValue: TPoint;
 begin
   raise InvalidCast('TPoint');
@@ -497,6 +489,37 @@ end;
 function TBaseValue.SameInstance(Other: IValue): Boolean;
 begin
   raise NotSupported('SameInstance');
+end;
+
+function TBaseValue.SameInstanceAsInterface(Other: IInterface): Boolean;
+begin
+  raise NotSupported('SameInstanceAsInterface');
+end;
+
+function TBaseValue.SameInstanceAsObject(Other: TObject): Boolean;
+begin
+  raise NotSupported('SameInstanceAsObject');
+end;
+
+function TBaseValue.SameInstanceInterfaceToInterface(A, B: IInterface): Boolean;
+var
+  CanonicalA: IInterface;
+  CanonicalB: IInterface;
+begin
+  CanonicalA := A as IInterface;
+  CanonicalB := B as IInterface;
+  Result := CanonicalA = CanonicalB;
+end;
+
+function TBaseValue.SameInstanceInterfaceToObject(AInterface: IInterface;
+  AObject: TObject): Boolean;
+var
+  ObjectAsInterface: IInterface;
+begin
+  if Supports(AObject, IInterface, ObjectAsInterface) then
+    Result := SameInstanceInterfaceToInterface(AInterface, ObjectAsInterface)
+  else
+    Result := (AInterface = nil) and (AObject = nil);
 end;
 
 function TBaseValue.SameText(Other: IValue): Boolean;
@@ -683,19 +706,19 @@ begin
   FValue := AValue;
 end;
 
-function TInterfaceValue.get_InterfaceValue: IInterface;
+function TInterfaceValue.SameInstance(Other: IValue): Boolean;
 begin
-  Result := FValue;
+  Result := Other.SameInstanceAsInterface(FValue);
 end;
 
-function TInterfaceValue.SameInstance(Other: IValue): Boolean;
-var
-  CanonicalValue: IInterface;
-  CanonicalOther: IInterface;
+function TInterfaceValue.SameInstanceAsInterface(Other: IInterface): Boolean;
 begin
-  CanonicalValue := FValue as IInterface;
-  CanonicalOther := Other.InterfaceValue as IInterface;
-  Result := CanonicalValue = CanonicalOther;
+  Result := SameInstanceInterfaceToInterface(FValue, Other);
+end;
+
+function TInterfaceValue.SameInstanceAsObject(Other: TObject): Boolean;
+begin
+  Result := SameInstanceInterfaceToObject(FValue, Other);
 end;
 
 { TObjectValue }
@@ -722,11 +745,6 @@ begin
     Result := 'nil object';
 end;
 
-function TObjectValue.get_ObjectValue: TObject;
-begin
-  Result := FValue;
-end;
-
 function TObjectValue.IsOfType(AClass: TClass): Boolean;
 begin
   Result := (FValue <> nil) and (FValue.ClassType = AClass);
@@ -734,7 +752,17 @@ end;
 
 function TObjectValue.SameInstance(Other: IValue): Boolean;
 begin
-  Result := FValue = Other.ObjectValue;
+  Result := Other.SameInstanceAsObject(FValue);
+end;
+
+function TObjectValue.SameInstanceAsInterface(Other: IInterface): Boolean;
+begin
+  Result := SameInstanceInterfaceToObject(Other, FValue);
+end;
+
+function TObjectValue.SameInstanceAsObject(Other: TObject): Boolean;
+begin
+  Result := FValue = Other;
 end;
 
 { TPointValue }
