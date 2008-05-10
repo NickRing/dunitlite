@@ -73,7 +73,7 @@ type
     class function Be: IBeHelper;
     class function Equal(AValue: TValue): IConstraint; static;
     class function &Not: IShouldHelper; static;
-    class function ReferTo(AInstance: TObject): IConstraint; static;
+    class function ReferTo(AInstance: TValue): IConstraint; static;
     class function Yield(AValue: TValue): IConstraint; static;
   end;
 
@@ -157,9 +157,9 @@ begin
   Result := TShouldNotHelper.Create;
 end;
 
-class function Should.ReferTo(AInstance: TObject): IConstraint;
+class function Should.ReferTo(AInstance: TValue): IConstraint;
 begin
-  Result := TRefersToObjectConstraint.CreateDefault(AInstance);
+  Result := TRefersToConstraint.CreateDefault(AInstance);
 end;
 
 class function Should.Yield(AValue: TValue): IConstraint;

@@ -128,15 +128,15 @@ type
     function Matches(AActualValue: TValue): Boolean; override;
   end;
 
-  TRefersToObjectConstraint = class(TBaseConstraint, IConstraint)
+  TRefersToConstraint = class(TBaseConstraint, IConstraint)
   strict private
-    FInstance: TObject;
+    FInstance: TValue;
   strict protected
     function WithDifferentComparer(AComparer: IValueComparer): IConstraint; override;
   public
-    constructor Create(AInstance: TObject; AComparer: IValueComparer);
+    constructor Create(AInstance: TValue; AComparer: IValueComparer);
 
-    class function CreateDefault(AInstance: TObject): IConstraint; static;
+    class function CreateDefault(AInstance: TValue): IConstraint; static;
 
     function ExpectedAndActual(AActualValue: TValue): TExpectedAndActual; override;
     function Matches(AActualValue: TValue): Boolean; override;
@@ -339,40 +339,36 @@ begin
     FUpperBoundComparisons, FUpperBound, FUpperBracket, AComparer);
 end;
 
-{ TRefersToObjectConstraint }
+{ TRefersToConstraint }
 
-constructor TRefersToObjectConstraint.Create(AInstance: TObject;
-  AComparer: IValueComparer);
+constructor TRefersToConstraint.Create(AInstance: TValue; AComparer: IValueComparer);
 begin
   inherited Create(AComparer);
   FInstance := AInstance;
 end;
 
-class function TRefersToObjectConstraint.CreateDefault(
-  AInstance: TObject): IConstraint;
+class function TRefersToConstraint.CreateDefault(
+  AInstance: TValue): IConstraint;
 begin
-  Result := TRefersToObjectConstraint.Create(AInstance, TDefaultValueComparer.Instance);
+  Result := TRefersToConstraint.Create(AInstance, TDefaultValueComparer.Instance);
 end;
 
-function TRefersToObjectConstraint.ExpectedAndActual(
+function TRefersToConstraint.ExpectedAndActual(
   AActualValue: TValue): TExpectedAndActual;
-var
-  Expected: TValue;
 begin
-  Expected := FInstance;
-  Result.Expected := Expected.AsString;
+  Result.Expected := FInstance.AsString;
   Result.Actual := AActualValue.AsString;
 end;
 
-function TRefersToObjectConstraint.Matches(AActualValue: TValue): Boolean;
+function TRefersToConstraint.Matches(AActualValue: TValue): Boolean;
 begin
-  Result := AActualValue.RefersToObject(FInstance);
+  Result := AActualValue.SameInstance(FInstance);
 end;
 
-function TRefersToObjectConstraint.WithDifferentComparer(
+function TRefersToConstraint.WithDifferentComparer(
   AComparer: IValueComparer): IConstraint;
 begin
-  Result := TRefersToObjectConstraint.Create(FInstance, AComparer);
+  Result := TRefersToConstraint.Create(FInstance, AComparer);
 end;
 
 { TNotConstraint }
