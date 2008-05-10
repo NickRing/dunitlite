@@ -1,0 +1,38 @@
+Version 0.5 (released 2008-05-10)
+-----------
+ENH: Should.ReferTo now works with interfaces, and can compare objects to
+     interfaces. Works correctly even if you compare two different interface
+     types on the same underlying instance.
+ENH: Added "Given" as an alias for "Specify". So if you want to document your
+     assumptions at the beginning of your test, you can use "Given.That(...)"
+     to improve readability.
+ENH: Added Should.[Not.]Be.False and Should.[Not.]Be.True.
+ENH: Added Should.[Not.]Be.Null and Should.[Not.]Be.Assigned. Both work with
+     either objects or interfaces.
+ENH: Added Should.[Not.]Be.GreaterThanOrEqualTo and
+     Should.[Not.]Be.LessThanOrEqualTo, as aliases for AtLeast and AtMost.
+
+Version 0.4 (released 2008-03-24)
+-----------
+FIX: When you used TInsulatedTest (or TSpecification), DUnit was unable to
+     count the number of passing tests — it just reported 0 tests run. Fixed.
+FIX: When you used TInsulatedTest (or TSpecification), the test-suite nodes
+     were labeled "TInsulatedTest" instead of the actual class name. Fixed.
+ENH: Added Should.ReferTo(...) (reference equality check). Currently only
+     works for objects, not interfaces.
+
+Version 0.3 (released 2007-07-25)
+-----------
+ENH: Added TInsulatedTest, which improves test isolation and memory usage.
+ENH: Added TSpecification base class, which reduces the number of units you
+     need in your "uses" clauses when writing tests / specifications.
+
+Version 0.2 (released 2007-06-16)
+-----------
+ENH: String context. When comparing long strings, show only part of the string
+     in the failure message, centered around the first character that differs.
+ENH: Added Should.Yield as an alias for Should.Equal.
+
+Version 0.1 (released 2007-05-19)
+-----------
+First public release.
