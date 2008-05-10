@@ -142,12 +142,21 @@ type
   end;
 
   TestRefersToConstraint = class(TConstraintTestCase)
+  strict private
+    function NilInterface: IInterface;
+    function NilObject: TObject;
   published
     procedure TestMatchesObjects;
     procedure TestDoesNotMatchObjects;
-    procedure TestObjectDoesNotMatchNil;
-    procedure TestNilDoesNotMatchObject;
+    procedure TestObjectDoesNotMatchNilObject;
+    procedure TestNilObjectDoesNotMatchObject;
     procedure TestObjectObjectFailureMessage;
+    procedure TestMatchesInterfaces;
+    procedure TestDoesNotMatchInterfaces;
+    procedure TestInterfaceDoesNotMatchNilInterface;
+    procedure TestNilInterfaceDoesNotMatchInterface;
+    procedure TestMatchesDifferentInterfacesOnSameInstance;
+    procedure TestInterfaceInterfaceFailureMessage;
   end;
 
 implementation
@@ -484,6 +493,26 @@ end;
 
 { TestRefersToConstraint }
 
+function TestRefersToConstraint.NilInterface: IInterface;
+begin
+  Result := nil;
+end;
+
+function TestRefersToConstraint.NilObject: TObject;
+begin
+  Result := nil;
+end;
+
+procedure TestRefersToConstraint.TestDoesNotMatchInterfaces;
+var
+  A: IInterface;
+  B: IInterface;
+begin
+  A := TInterfacedObject.Create;
+  B := TInterfacedObject.Create;
+  CheckDoesNotMatch(A, Should.ReferTo(B));
+end;
+
 procedure TestRefersToConstraint.TestDoesNotMatchObjects;
 var
   OtherObject: TObject;
@@ -496,19 +525,66 @@ begin
   end;
 end;
 
+procedure TestRefersToConstraint.TestInterfaceDoesNotMatchNilInterface;
+var
+  Intf: IInterface;
+begin
+  Intf := TInterfacedObject.Create;
+  CheckDoesNotMatch(Intf, Should.ReferTo(NilInterface));
+end;
+
+procedure TestRefersToConstraint.TestInterfaceInterfaceFailureMessage;
+var
+  A: IInterface;
+  B: IInterface;
+begin
+  A := TInterfacedObject.Create;
+  B := TInterfacedObject.Create;
+  CheckExpectedAndActualStrings(
+    Format('interface($%.8x)', [Integer(B)]),
+    Format('interface($%.8x)', [Integer(A)]),
+    A, Should.ReferTo(B));
+end;
+
+procedure TestRefersToConstraint.TestMatchesDifferentInterfacesOnSameInstance;
+var
+  Foo: IFoo;
+  Bar: IBar;
+begin
+  Foo := TFooBar.Create;
+  Bar := Foo as IBar;
+  CheckMatches(Foo, Should.ReferTo(Bar));
+end;
+
+procedure TestRefersToConstraint.TestMatchesInterfaces;
+var
+  Intf: IInterface;
+begin
+  Intf := TInterfacedObject.Create;
+  CheckMatches(Intf, Should.ReferTo(Intf));
+end;
+
 procedure TestRefersToConstraint.TestMatchesObjects;
 begin
   CheckMatches(Self, Should.ReferTo(Self));
 end;
 
-procedure TestRefersToConstraint.TestNilDoesNotMatchObject;
+procedure TestRefersToConstraint.TestNilInterfaceDoesNotMatchInterface;
+var
+  Intf: IInterface;
 begin
-  CheckDoesNotMatch(nil, Should.ReferTo(Self));
+  Intf := TInterfacedObject.Create;
+  CheckDoesNotMatch(NilInterface, Should.ReferTo(Intf));
 end;
 
-procedure TestRefersToConstraint.TestObjectDoesNotMatchNil;
+procedure TestRefersToConstraint.TestNilObjectDoesNotMatchObject;
 begin
-  CheckDoesNotMatch(Self, Should.ReferTo(nil));
+  CheckDoesNotMatch(NilObject, Should.ReferTo(Self));
+end;
+
+procedure TestRefersToConstraint.TestObjectDoesNotMatchNilObject;
+begin
+  CheckDoesNotMatch(Self, Should.ReferTo(NilObject));
 end;
 
 procedure TestRefersToConstraint.TestObjectObjectFailureMessage;
