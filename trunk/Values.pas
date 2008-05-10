@@ -32,6 +32,9 @@ unit Values;
 interface
 
 uses
+  {$DEFINE VALUE_EXTENSIONS_USES}
+  {$I ValueExtensions.inc}
+  {$UNDEF VALUE_EXTENSIONS_USES}
   SysUtils,
   Types,
   TypInfo,
@@ -44,6 +47,10 @@ type
   TBarEnum = (barBaz, barQuux);
 
   TValue = record
+  public
+    {$DEFINE VALUE_EXTENSIONS_TVALUE_DECLARATION}
+    {$I ValueExtensions.inc}
+    {$UNDEF VALUE_EXTENSIONS_TVALUE_DECLARATION}
   strict private
     FValue: IValue;
   public
@@ -253,6 +260,10 @@ uses
   Classes,
   Math,
   StringInspectors;
+
+{$DEFINE VALUE_EXTENSIONS_IMPLEMENTATION_SECTION}
+{$I ValueExtensions.inc}
+{$UNDEF VALUE_EXTENSIONS_IMPLEMENTATION_SECTION}
 
 { TValue }
 
