@@ -1,9 +1,9 @@
 // Values.pas compile-time extension point
 //
 // To extend TValue to support additional types, you should make your own file
-// named ValueExtensions.inc, and put it in a directory that comes before the
-// DUnitLite directory in your project's search path. Then customize that file
-// as you like.
+// named ValueExtensions.inc. Put it somewhere in your project's search path,
+// and make sure DUnitLite's "extensibility" directory is not in your project
+// search path. Then customize your ValueExtensions.inc file as you like.
 //
 // ValueExtensions.inc is included three times, with different $DEFINEs each
 // time. Your file should have three sections, each within its own $IFDEF, as
